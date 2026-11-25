@@ -1,0 +1,153 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "";
+    var depUrl = "/vehiculos";
+}
+
+<section class="hero" aria-labelledby="hero-title">
+    <div class="ml-container hero__inner">
+        <span class="eyebrow">Marketplace de vehículos</span>
+        <h1 id="hero-title">Tu próximo vehículo, tu próxima oportunidad.</h1>
+        <p class="hero__lead">Compra, vende o alquila autos, motos y vehículos comerciales. Negocia directo con el propietario o encuentra un vehículo para empezar a trabajar hoy.</p>
+
+        <form class="search-card" method="get" action="@depUrl" role="search" aria-label="Buscar vehículos">
+            <div class="segmented" role="radiogroup" aria-label="Modalidad">
+                <input type="radio" name="operation" id="op-sale" value="SALE" checked /><label for="op-sale">Comprar</label>
+                <input type="radio" name="operation" id="op-rent" value="RENT" /><label for="op-rent">Alquilar</label>
+                <input type="radio" name="operation" id="op-work" value="WORK_RENT" /><label for="op-work">Trabajar</label>
+            </div>
+            <div class="search-card__grid">
+                <div>
+                    <label for="home-q" class="form-label">¿Qué buscas?</label>
+                    <input id="home-q" name="q" class="form-control" type="search" placeholder="Marca, modelo o palabra clave" autocomplete="off" />
+                </div>
+                <div>
+                    <label for="home-type" class="form-label">Tipo de vehículo</label>
+                    <select id="home-type" name="vehicleTypeId" class="form-select">
+                        <option value="">Todos los tipos</option>
+                        @foreach (var t in Model.Types) { <option value="@t.Id">@t.Name</option> }
+                    </select>
+                </div>
+                <div>
+                    <label for="home-dep" class="form-label">Ubicación</label>
+                    <select id="home-dep" name="departmentId" class="form-select">
+                        <option value="">Todo el Perú</option>
+                        @foreach (var d in Model.Departments) { <option value="@d.Id">@d.Name</option> }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg"><i data-lucide="search"></i>Buscar vehículos</button>
+            </div>
+        </form>
+    </div>
+    <span class="hero__credit">Ilustración propia de MotorLink</span>
+</section>
+
+<section class="ml-section ml-section--tight" aria-labelledby="cat-title">
+    <div class="ml-container">
+        <div class="section-head"><div><h2 id="cat-title">Explora por categoría</h2></div></div>
+        <div class="category-grid">
+            @foreach (var c in Model.Categories)
+            {
+                <a class="category-tile" href="@(c.TypeId is null ? "/vehiculos" : $"/vehiculos?vehicleTypeId={c.TypeId}")">
+                    <span class="stat__icon"><i data-lucide="@c.Icon"></i></span>
+                    <strong>@c.Label</strong>
+                    <span>@(c.Count == 1 ? "1 publicación" : $"{Ui.Number(c.Count)} publicaciones")</span>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="ml-section ml-section--white" aria-labelledby="feat-title">
+    <div class="ml-container">
+        <div class="section-head">
+            <div><h2 id="feat-title">Publicaciones destacadas</h2><p>Vehículos promocionados por sus propietarios.</p></div>
+            <a class="btn btn-light" href="/vehiculos">Ver todos</a>
+        </div>
+        @if (Model.Featured.Count == 0)
+        {
+            <div class="notice"><i data-lucide="info"></i><div>Aún no hay publicaciones destacadas. Los planes de pago permiten destacar tus vehículos para que aparezcan aquí. <a href="/planes" class="fw-semibold">Ver planes</a></div></div>
+        }
+        else
+        {
+            <div class="listing-grid">
+                @foreach (var l in Model.Featured) { @await Component.InvokeAsync("ListingCard", new { listing = l, isFavorite = Model.Favorites.Contains(l.Id) }) }
+            </div>
+        }
+    </div>
+</section>
+
+<section class="ml-section" aria-labelledby="work-title">
+    <div class="ml-container">
+        <div class="work-band">
+            <div class="row g-0">
+                <div class="col-lg-5 work-band__intro d-flex flex-column justify-content-center">
+                    <span class="eyebrow text-info">Para conductores</span>
+                    <h2 id="work-title" class="mt-2">Empieza a trabajar con un vehículo listo</h2>
+                    <p>Alquila por día, semana o mes autos para taxi, delivery, reparto o carga. Cada publicación detalla tarifa, garantía, turno, licencia requerida y quién asume combustible y mantenimiento.</p>
+                    <div><a class="btn btn-primary" href="/vehiculos?operation=WORK_RENT">Ver vehículos para trabajar</a></div>
+                </div>
+                <div class="col-lg-7 work-band__list">
+                    @if (Model.Work.Count == 0)
+                    {
+                        <p class="mb-0 text-white-50">Todavía no hay vehículos para trabajar publicados. ¿Tienes uno? <a class="text-white fw-semibold" href="/panel/publish">Publícalo</a> y llega a conductores de tu zona.</p>
+                    }
+                    @foreach (var l in Model.Work)
+                    {
+                        var p = Ui.Price(l.Operations, "WORK_RENT");
+                        <a class="work-item" href="/vehiculos/@l.Id">
+                            <img src="@Ui.Img(l.CoverUrl)" alt="" loading="lazy" width="88" height="66" />
+                            <div><strong>@l.Brand @l.Model @l.ModelYear</strong><small>@l.District, @l.Province</small></div>
+                            <div class="price">@p?.Amount <small>@p?.Suffix</small></div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ml-section ml-section--white" aria-labelledby="latest-title">
+    <div class="ml-container">
+        <div class="section-head">
+            <div><h2 id="latest-title">Últimas publicaciones</h2><p>Recién publicados y aprobados.</p></div>
+            <a class="btn btn-light" href="/vehiculos">Explorar</a>
+        </div>
+        @if (Model.Latest.Count == 0 && Model.Featured.Count == 0)
+        {
+            <partial name="_EmptyState" model='new EmptyStateModel("car", "Aún no hay publicaciones", "Sé el primero en publicar un vehículo en MotorLink.", "Publicar vehículo", "/panel/publish")' />
+        }
+        else
+        {
+            <div class="listing-grid">
+                @foreach (var l in Model.Latest) { @await Component.InvokeAsync("ListingCard", new { listing = l, isFavorite = Model.Favorites.Contains(l.Id) }) }
+            </div>
+        }
+    </div>
+</section>
+
+<section class="ml-section" aria-labelledby="how-title">
+    <div class="ml-container">
+        <div class="section-head"><div><h2 id="how-title">Cómo funciona</h2><p>Conectamos a compradores, arrendatarios y propietarios. El pago y la entrega se acuerdan directamente entre las partes.</p></div></div>
+        <div class="steps">
+            <div class="step"><div class="step__n">1</div><h3>Publica</h3><p class="text-muted mb-0">Registra tu vehículo, sube fotos y elige si lo vendes, alquilas o lo ofreces para trabajar. Un moderador revisa la publicación antes de mostrarla.</p></div>
+            <div class="step"><div class="step__n">2</div><h3>Contacta</h3><p class="text-muted mb-0">Escribe por WhatsApp al anunciante o guarda el vehículo en favoritos para decidir después.</p></div>
+            <div class="step"><div class="step__n">3</div><h3>Negocia</h3><p class="text-muted mb-0">Envía una propuesta de precio y recibe contrapropuestas. Cuando ambas partes aceptan, queda registrado el precio acordado.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="ml-section ml-section--white" aria-labelledby="plans-title">
+    <div class="ml-container">
+        <div class="section-head">
+            <div><h2 id="plans-title">Planes para publicar más y vender mejor</h2><p>Todos los planes permiten buscar, guardar favoritos, negociar y contactar propietarios.</p></div>
+            <a class="btn btn-light" href="/planes">Comparar planes</a>
+        </div>
+        <div class="row g-3">
+            @foreach (var p in Model.Plans)
+            {
+                <div class="col-sm-6 col-lg"><partial name="_PlanCard" model="p" view-data='new ViewDataDictionary(ViewData) { ["Compact"] = true }' /></div>
+            }
+        </div>
+    </div>
+</section>

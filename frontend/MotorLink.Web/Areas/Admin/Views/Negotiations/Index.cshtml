@@ -1,0 +1,26 @@
+@model PagedResult<AdminNegotiation>
+@{
+    var status = ViewData["Status"] as string;
+    var tabs = new (string? K, string L)[] { (null, "Todas"), ("PENDING", "Pendientes"), ("COUNTER_OFFER", "Contrapropuestas"), ("ACCEPTED", "Acuerdos"), ("REJECTED", "Rechazadas"), ("CANCELLED", "Canceladas"), ("EXPIRED", "Vencidas") };
+}
+<div class="page-title"><div><h2>Negociaciones</h2><p>Supervisión de propuestas entre usuarios (solo lectura). Un acuerdo es de precio; MotorLink no gestiona pagos ni entregas.</p></div></div>
+<nav class="nav-tabs-ml" aria-label="Estado">@foreach (var t in tabs) { <a href="/admin/negotiations@(t.K is null ? "" : "?status=" + t.K)" class="@(status == t.K ? "is-active" : "")">@t.L</a> }</nav>
+<section class="ml-card">
+    @if (Model.Items.Count == 0) { <partial name="_EmptyState" model='new EmptyStateModel("handshake", "No hay negociaciones", "Aún no hay propuestas en este estado.")' /> }
+    else
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Negociaciones</caption>
+            <thead><tr><th>Publicación</th><th>Modalidad</th><th>Interesado</th><th>Propietario</th><th class="num">Inicial</th><th class="num">Última</th><th>Estado</th><th>Actualizada</th></tr></thead>
+            <tbody>
+            @foreach (var n in Model.Items)
+            {
+                <tr><td class="fw-semibold">@n.ListingTitle</td><td>@Ui.Operation(n.OperationType)</td><td>@n.BuyerEmail</td><td>@n.SellerEmail</td>
+                    <td class="num">@Ui.Money(n.Currency, n.InitialAmount)</td><td class="num">@Ui.Money(n.Currency, n.LastAmount) <small class="text-muted">@Ui.Period(n.Periodicity)</small></td>
+                    <td><span class="ml-badge ml-badge--@Ui.Tone(n.Status)">@Ui.NegotiationStatus(n.Status)</span></td><td class="text-muted">@Ui.Date(n.UpdatedAt ?? n.CreatedAt)</td></tr>
+            }
+            </tbody>
+        </table></div>
+        <div class="table-foot"><span>@Model.TotalCount negociación@(Model.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page, totalPages = Model.TotalPages })</div>
+    }
+</section>

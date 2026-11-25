@@ -1,0 +1,219 @@
+@model MarketplaceViewModel
+@{
+    var q = Model.Query;
+    ViewData["Title"] = Model.Heading;
+    var total = Model.Result.TotalCount;
+    string Sel(bool b) => b ? "selected" : "";
+}
+<div class="page-head">
+    <div class="ml-container">
+        <h1>@Model.Heading</h1>
+        <p>@(total == 0 ? "No hay resultados con los filtros actuales." : total == 1 ? "1 vehículo encontrado." : $"{Ui.Number(total)} vehículos encontrados.")</p>
+    </div>
+</div>
+
+<div class="ml-container py-4">
+    <div class="results-layout">
+        <aside class="offcanvas-lg offcanvas-start" tabindex="-1" id="filters-panel" aria-labelledby="filters-title">
+            <div class="offcanvas-header">
+                <h2 class="offcanvas-title h5" id="filters-title">Filtros</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#filters-panel" aria-label="Cerrar filtros"></button>
+            </div>
+            <div class="offcanvas-body d-block">
+                <form id="filters-form" class="filters" method="get" action="/vehiculos" data-filters>
+                    <div class="filters__group">
+                        <label class="filters__title" for="f-q">Búsqueda</label>
+                        <input id="f-q" name="q" value="@q.Q" class="form-control" type="search" placeholder="Marca, modelo o palabra clave" />
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title" id="f-op-label">Modalidad</div>
+                        <div class="segmented" role="radiogroup" aria-labelledby="f-op-label">
+                            <input type="radio" name="operation" id="f-op-all" value="" @(string.IsNullOrEmpty(q.Operation) ? "checked" : null) /><label for="f-op-all">Todas</label>
+                            <input type="radio" name="operation" id="f-op-sale" value="SALE" @(q.Operation == "SALE" ? "checked" : null) /><label for="f-op-sale">Comprar</label>
+                            <input type="radio" name="operation" id="f-op-rent" value="RENT" @(q.Operation == "RENT" ? "checked" : null) /><label for="f-op-rent">Alquilar</label>
+                            <input type="radio" name="operation" id="f-op-work" value="WORK_RENT" @(q.Operation == "WORK_RENT" ? "checked" : null) /><label for="f-op-work">Trabajar</label>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Vehículo</div>
+                        <div class="stack">
+                            <div>
+                                <label class="form-label" for="vehicleTypeId">Tipo</label>
+                                <select id="vehicleTypeId" name="vehicleTypeId" class="form-select">
+                                    <option value="">Todos</option>
+                                    @foreach (var t in Model.Types) { <option value="@t.Id" selected="@(q.VehicleTypeId == t.Id)">@t.Name</option> }
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="brandId">Marca</label>
+                                <select id="brandId" name="brandId" class="form-select"
+                                        data-cascade='{"target":"#modelId","url":"/catalogos/modelos","params":{"brandId":"#brandId","vehicleTypeId":"#vehicleTypeId"},"require":["brandId"],"placeholder":"Todos los modelos"}'>
+                                    <option value="">Todas</option>
+                                    @foreach (var b in Model.Brands) { <option value="@b.Id" selected="@(q.BrandId == b.Id)">@b.Name</option> }
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="modelId">Modelo</label>
+                                <select id="modelId" name="modelId" class="form-select" data-selected="@q.ModelId" disabled><option value="">Todos los modelos</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Año y estado</div>
+                        <div class="row g-2">
+                            <div class="col-6"><label class="form-label" for="yearMin">Desde</label><input id="yearMin" name="yearMin" value="@q.YearMin" class="form-control" type="number" min="1950" max="2100" inputmode="numeric" placeholder="2015" /></div>
+                            <div class="col-6"><label class="form-label" for="yearMax">Hasta</label><input id="yearMax" name="yearMax" value="@q.YearMax" class="form-control" type="number" min="1950" max="2100" inputmode="numeric" placeholder="2026" /></div>
+                            <div class="col-12">
+                                <label class="form-label" for="condition">Estado</label>
+                                <select id="condition" name="condition" class="form-select">
+                                    <option value="">Cualquiera</option>
+                                    <option value="NEW" selected="@(q.Condition == "NEW")">Nuevo</option>
+                                    <option value="SEMI_NEW" selected="@(q.Condition == "SEMI_NEW")">Seminuevo</option>
+                                    <option value="USED" selected="@(q.Condition == "USED")">Usado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Precio o tarifa</div>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label" for="currency">Moneda</label>
+                                <select id="currency" name="currency" class="form-select">
+                                    <option value="PEN" selected="@(q.Currency != "USD")">Soles (S/)</option>
+                                    <option value="USD" selected="@(q.Currency == "USD")">Dólares (US$)</option>
+                                </select>
+                            </div>
+                            <div class="col-6"><label class="form-label" for="priceMin">Mínimo</label><input id="priceMin" name="priceMin" value="@q.PriceMin" class="form-control" type="number" min="0" step="any" inputmode="decimal" /></div>
+                            <div class="col-6"><label class="form-label" for="priceMax">Máximo</label><input id="priceMax" name="priceMax" value="@q.PriceMax" class="form-control" type="number" min="0" step="any" inputmode="decimal" /></div>
+                            <div class="col-12 form-text">El filtro de precio solo compara publicaciones en la moneda elegida. En alquileres se usa la tarifa diaria.</div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Características</div>
+                        <div class="stack">
+                            <div>
+                                <label class="form-label" for="fuel">Combustible</label>
+                                <select id="fuel" name="fuel" class="form-select">
+                                    <option value="">Cualquiera</option>
+                                    @foreach (var f in new[] { "GASOLINE", "DIESEL", "LPG", "CNG", "HYBRID", "ELECTRIC" }) { <option value="@f" selected="@(q.Fuel == f)">@Ui.Fuel(f)</option> }
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="transmission">Transmisión</label>
+                                <select id="transmission" name="transmission" class="form-select">
+                                    <option value="">Cualquiera</option>
+                                    <option value="MANUAL" selected="@(q.Transmission == "MANUAL")">Manual</option>
+                                    <option value="AUTOMATIC" selected="@(q.Transmission == "AUTOMATIC")">Automática</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="maxMileage">Kilometraje máximo</label>
+                                <select id="maxMileage" name="maxMileage" class="form-select">
+                                    <option value="">Cualquiera</option>
+                                    @foreach (var km in new[] { 10000, 30000, 60000, 100000, 150000, 200000 }) { <option value="@km" selected="@(q.MaxMileage == km)">Hasta @Ui.Number(km) km</option> }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Ubicación</div>
+                        <div class="stack">
+                            <div>
+                                <label class="form-label" for="departmentId">Departamento</label>
+                                <select id="departmentId" name="departmentId" class="form-select"
+                                        data-cascade='{"target":"#provinceId","url":"/catalogos/provincias","params":{"departmentId":"#departmentId"},"require":["departmentId"],"placeholder":"Todas las provincias"}'>
+                                    <option value="">Todos</option>
+                                    @foreach (var d in Model.Departments) { <option value="@d.Id" selected="@(q.DepartmentId == d.Id)">@d.Name</option> }
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="provinceId">Provincia</label>
+                                <select id="provinceId" name="provinceId" class="form-select" data-selected="@q.ProvinceId"
+                                        data-cascade='{"target":"#districtId","url":"/catalogos/distritos","params":{"provinceId":"#provinceId"},"require":["provinceId"],"placeholder":"Todos los distritos"}' disabled><option value="">Todas las provincias</option></select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="districtId">Distrito</label>
+                                <select id="districtId" name="districtId" class="form-select" data-selected="@q.DistrictId" disabled><option value="">Todos los distritos</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group">
+                        <div class="filters__title">Disponibilidad</div>
+                        <div class="stack">
+                            <select id="availability" name="availability" class="form-select" aria-label="Disponibilidad">
+                                <option value="AVAILABLE" selected="@(string.IsNullOrEmpty(q.Availability) || q.Availability == "AVAILABLE")">Disponibles ahora</option>
+                                <option value="RESERVED" selected="@(q.Availability == "RESERVED")">Reservados</option>
+                                <option value="RENTED" selected="@(q.Availability == "RENTED")">Alquilados</option>
+                                <option value="ALL" selected="@(q.Availability == "ALL")">Todos</option>
+                            </select>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="negotiable" name="negotiable" value="true" @(q.Negotiable == true ? "checked" : null) />
+                                <label class="form-check-label" for="negotiable">Solo precio negociable</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filters__group d-grid gap-2">
+                        <button type="submit" class="btn btn-primary"><i data-lucide="sliders-horizontal"></i>Aplicar filtros</button>
+                        <a class="btn btn-light" href="/vehiculos">Limpiar filtros</a>
+                    </div>
+                </form>
+            </div>
+        </aside>
+
+        <section aria-label="Resultados">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filters-panel" aria-controls="filters-panel"><i data-lucide="sliders-horizontal"></i>Filtros</button>
+                    <strong class="tabular">@Ui.Number(total)</strong> <span class="text-muted">resultado@(total == 1 ? "" : "s")</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted" for="sort">Ordenar por</label>
+                    <select id="sort" name="sort" form="filters-form" class="form-select form-select-sm w-auto" data-autosubmit>
+                        <option value="" selected="@(string.IsNullOrEmpty(q.Sort))">Más recientes</option>
+                        <option value="PRICE_ASC" selected="@(q.Sort == "PRICE_ASC")">Precio: menor a mayor</option>
+                        <option value="PRICE_DESC" selected="@(q.Sort == "PRICE_DESC")">Precio: mayor a menor</option>
+                        <option value="YEAR_DESC" selected="@(q.Sort == "YEAR_DESC")">Año: más nuevos</option>
+                        <option value="YEAR_ASC" selected="@(q.Sort == "YEAR_ASC")">Año: más antiguos</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (Model.Chips.Count > 0)
+            {
+                <div class="cluster mb-3" aria-label="Filtros aplicados">
+                    @foreach (var c in Model.Chips) { <span class="chip">@c.Label<a href="@c.RemoveUrl" aria-label="Quitar filtro @c.Label"><i data-lucide="x" class="icon--sm"></i></a></span> }
+                    <a class="small fw-semibold" href="/vehiculos">Limpiar todo</a>
+                </div>
+            }
+
+            @if (Model.Error is not null)
+            {
+                <div class="notice notice--danger mb-3" role="alert"><i data-lucide="circle-alert"></i><div>@Model.Error</div></div>
+            }
+
+            @if (Model.Result.Items.Count == 0)
+            {
+                <div class="ml-card"><partial name="_EmptyState" model='new EmptyStateModel("search-x", "No encontramos vehículos", "Prueba quitando algunos filtros o ampliando la ubicación.", "Limpiar filtros", "/vehiculos")' /></div>
+            }
+            else
+            {
+                <div class="listing-grid">
+                    @foreach (var l in Model.Result.Items)
+                    {
+                        <div>@await Component.InvokeAsync("ListingCard", new { listing = l, isFavorite = Model.Favorites.Contains(l.Id), preferred = q.Operation })</div>
+                    }
+                </div>
+                <div class="mt-5">@await Component.InvokeAsync("Pagination", new { page = Model.Result.Page, totalPages = Model.Result.TotalPages })</div>
+            }
+        </section>
+    </div>
+</div>

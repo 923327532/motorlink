@@ -1,0 +1,36 @@
+@model PagedResult<NotificationInfo>
+@{
+    var unread = (bool)(ViewData["Unread"] ?? false);
+    string Target(NotificationInfo n)
+    {
+        var to = n.Type switch
+        {
+            var t when t.StartsWith("NEGOTIATION") && n.RelatedEntityId is not null => $"/panel/negotiations/details/{n.RelatedEntityId}",
+            var t when t.StartsWith("LISTING") => "/panel/listings",
+            var t when t.StartsWith("SUBSCRIPTION") => "/panel/subscription",
+            _ => "/panel/notifications"
+        };
+        return $"/panel/notifications/open/{n.Id}?to={Uri.EscapeDataString(to)}";
+    }
+}
+<div class="page-title">
+    <div><h2>Notificaciones</h2><p>Propuestas, cambios de estado de tus publicaciones y avisos de tu plan.</p></div>
+    <form asp-action="MarkAll" method="post"><button class="btn btn-light" type="submit"><i data-lucide="check-check"></i>Marcar todas como leídas</button></form>
+</div>
+<nav class="nav-tabs-ml"><a href="/panel/notifications" class="@(unread ? "" : "is-active")">Todas</a><a href="/panel/notifications?unread=true" class="@(unread ? "is-active" : "")">Sin leer</a></nav>
+<section class="ml-card">
+    @if (Model.Items.Count == 0)
+    {
+        <partial name="_EmptyState" model='new EmptyStateModel("bell-off", unread ? "No tienes notificaciones sin leer" : "No tienes notificaciones", "Aquí aparecerán las novedades de tus publicaciones y negociaciones.")' />
+    }
+    else
+    {
+        <ul class="list-unstyled mb-0">
+            @foreach (var n in Model.Items)
+            {
+                <li><a class="bell-menu__item @(n.IsRead ? "" : "is-unread")" href="@Target(n)"><strong>@n.Title</strong><span>@n.Message</span><small>@Ui.DateTimeText(n.CreatedAt)</small></a></li>
+            }
+        </ul>
+        <div class="table-foot"><span>@Model.TotalCount notificación@(Model.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page, totalPages = Model.TotalPages })</div>
+    }
+</section>

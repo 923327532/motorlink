@@ -1,0 +1,22 @@
+@model SideNavModel
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    string? lastGroup = null;
+}
+<nav class="side-nav" aria-label="Navegación del panel">
+    @foreach (var item in Model.Items)
+    {
+        var active = item.Controller == controller && (item.Action is null || item.Action == action || (item.Action == "Index" && action is "Index"))
+                     && !(item.Controller == "Subscription" && item.Action == "Index" && action == "Payments");
+        if (item.Group is not null && item.Group != lastGroup)
+        {
+            <div class="side-nav__label">@item.Group</div>
+            lastGroup = item.Group;
+        }
+        <a href="@item.Url" class="@(active ? "is-active" : "")" aria-current="@(active ? "page" : null)">
+            <i data-lucide="@item.Icon"></i><span>@item.Label</span>
+            @if (item.Badge is not null) { <span class="count">@item.Badge</span> }
+        </a>
+    }
+</nav>

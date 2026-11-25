@@ -1,0 +1,58 @@
+@model ModerationViewModel
+@{
+    var tabs = new (string K, string L)[] { ("PENDING_REVIEW", "Por revisar"), ("PUBLISHED", "Publicadas"), ("REJECTED", "Rechazadas"), ("PAUSED", "Pausadas"), ("RESERVED", "Reservadas"), ("RENTED", "Alquiladas"), ("SOLD", "Vendidas"), ("DRAFT", "Borradores"), ("ARCHIVED", "Archivadas") };
+}
+<div class="page-title"><div><h2>Publicaciones</h2><p>Modera las publicaciones: solo las aprobadas son visibles para el público.</p></div></div>
+<nav class="nav-tabs-ml" aria-label="Estado de publicaciones">
+    @foreach (var t in tabs) { <a href="/admin/listings?status=@t.K" class="@(Model.Status == t.K ? "is-active" : "")">@t.L</a> }
+</nav>
+<section class="ml-card">
+    @if (Model.Page.Items.Count == 0)
+    {
+        <partial name="_EmptyState" model='new EmptyStateModel(Model.Status == "PENDING_REVIEW" ? "shield-check" : "megaphone", Model.Status == "PENDING_REVIEW" ? "No hay publicaciones por revisar" : "No hay publicaciones en este estado", "Todo al día.")' />
+    }
+    else
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Publicaciones</caption>
+            <thead><tr><th>Publicación</th><th>Anunciante</th><th>Estado</th><th>Creada</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var l in Model.Page.Items)
+            {
+                <tr>
+                    <td><div class="fw-semibold">@l.Title</div><div class="small text-muted">@l.Vehicle</div>@if (!string.IsNullOrWhiteSpace(l.RejectionReason)) { <div class="small text-danger">Motivo: @l.RejectionReason</div> }</td>
+                    <td>@l.SellerEmail</td>
+                    <td><span class="ml-badge ml-badge--@Ui.Tone(l.Status)">@Ui.ListingStatus(l.Status)</span></td>
+                    <td class="text-muted">@Ui.Date(l.CreatedAt)</td>
+                    <td>
+                        <div class="table-actions">
+                            @if (l.Status == "PENDING_REVIEW")
+                            {
+                                <form asp-action="Approve" method="post" data-no-loading><input type="hidden" name="id" value="@l.Id" /><input type="hidden" name="status" value="@Model.Status" />
+                                    <button type="submit" class="btn btn-sm btn-success" data-confirm="«@l.Title» pasará a ser visible para el público." data-confirm-title="Aprobar publicación" data-confirm-ok="Aprobar"><i data-lucide="check"></i>Aprobar</button></form>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#reject-modal" data-fill='@Json.Serialize(new { id = l.Id, title = l.Title })'><i data-lucide="x"></i>Rechazar</button>
+                            }
+                            else if (l.Status is "PUBLISHED" or "RESERVED" or "RENTED") { <a class="btn btn-sm btn-light" href="/vehiculos/@l.Id" target="_blank" rel="noopener">Ver en el portal</a> }
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+        <div class="table-foot"><span>@Model.Page.TotalCount publicación@(Model.Page.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page.Page, totalPages = Model.Page.TotalPages })</div>
+    }
+</section>
+
+<div class="modal fade" id="reject-modal" tabindex="-1" aria-labelledby="reject-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" asp-action="Reject" method="post">
+            <div class="modal-header"><h2 class="modal-title" id="reject-title">Rechazar publicación</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body stack">
+                <input type="hidden" name="id" /><input type="hidden" name="status" value="@Model.Status" />
+                <p class="mb-0">Publicación: <strong data-fill-text="title"></strong></p>
+                <div><label class="form-label" for="reject-reason">Motivo del rechazo *</label><textarea id="reject-reason" name="reason" class="form-control" rows="3" minlength="5" maxlength="500" required placeholder="Explica qué debe corregir el propietario."></textarea><div class="form-text">El propietario verá este motivo.</div></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Rechazar publicación</button></div>
+        </form>
+    </div>
+</div>

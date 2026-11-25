@@ -1,0 +1,44 @@
+@model ListingSummary
+@{
+    var price = Ui.Price(Model.Operations, ViewData["Preferred"] as string);
+    var fav = (bool)(ViewData["IsFavorite"] ?? false);
+    var negotiable = Model.Operations.Any(o => o.IsNegotiable);
+    var ops = Model.Operations.Select(o => o.OperationType).Distinct().ToList();
+}
+<article class="listing-card @(Model.IsAvailable ? "" : "listing-card--unavailable")">
+    <div class="listing-card__media">
+        <img src="@Ui.Img(Model.CoverUrl)" alt="@Model.Brand @Model.Model @Model.ModelYear" loading="lazy" width="640" height="480" />
+        <div class="listing-card__tags">
+            @foreach (var o in ops)
+            {
+                <span class="ml-badge @(o == "WORK_RENT" ? "ml-badge--dark" : "")">@Ui.Operation(o)</span>
+            }
+            @if (Model.IsFeatured) { <span class="ml-badge ml-badge--info">Destacada</span> }
+            @if (!Model.IsAvailable) { <span class="ml-badge ml-badge--warning">@Ui.ListingStatus(Model.Status)</span> }
+        </div>
+        <button type="button" class="listing-card__fav" data-favorite="@Model.Id" aria-pressed="@(fav ? "true" : "false")"
+                aria-label="@(fav ? "Quitar de favoritos" : "Guardar en favoritos")" data-remove-card="@(ViewData["Remove"] is true ? "[data-card-wrap]" : null)">
+            <i data-lucide="heart"></i>
+        </button>
+    </div>
+    <div class="listing-card__body">
+        <h3 class="listing-card__title"><a href="/vehiculos/@Model.Id">@Model.Brand @Model.Model @Model.ModelYear</a></h3>
+        <div class="text-muted small truncate">@(Model.Version ?? Model.Title)</div>
+        <div class="listing-card__meta">
+            <span><i data-lucide="gauge" class="icon--sm"></i>@Ui.Number(Model.Mileage) km</span>
+            <span><i data-lucide="tag" class="icon--sm"></i>@Ui.Condition(Model.Condition)</span>
+            <span><i data-lucide="fuel" class="icon--sm"></i>@Ui.Fuel(Model.FuelType)</span>
+            <span><i data-lucide="map-pin" class="icon--sm"></i>@Model.District, @Model.Province</span>
+        </div>
+        <div class="listing-card__foot">
+            <div>
+                @if (price is not null)
+                {
+                    <div class="price">@price.Amount @if (price.Suffix is not null) { <small>@price.Suffix</small> }</div>
+                    <div class="small text-muted">@Ui.Operation(price.OperationType)</div>
+                }
+            </div>
+            @if (negotiable) { <span class="ml-badge ml-badge--success" title="El propietario acepta propuestas">Negociable</span> }
+        </div>
+    </div>
+</article>

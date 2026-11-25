@@ -1,0 +1,4160 @@
+{
+  "info": {
+    "name": "MotorLink API v1",
+    "description": "Generada desde el OpenAPI de la API. 1) Ejecuta POST /auth/login (o register): los tokens se guardan solos. 2) El resto de solicitudes usa {{accessToken}} como Bearer. Los valores de ejemplo son representativos: reemplaza los identificadores ({{id}}, {{listingId}}, ...). Los enums se envían en MAYÚSCULAS (PENDING_REVIEW, WORK_RENT...).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5080"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "id",
+      "value": ""
+    },
+    {
+      "key": "listingId",
+      "value": ""
+    },
+    {
+      "key": "vehicleId",
+      "value": ""
+    },
+    {
+      "key": "imageId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "AdminCatalogs",
+      "item": [
+        {
+          "name": "GET /admin/catalogs/vehicle-types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/vehicle-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "vehicle-types"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/vehicle-types",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/vehicle-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "vehicle-types"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/vehicle-types/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/vehicle-types/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "vehicle-types",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/vehicle-types/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/vehicle-types/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "vehicle-types",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/vehicle-types/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/vehicle-types/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "vehicle-types",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/catalogs/brands",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/brands",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "brands"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/brands",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/brands",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "brands"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/brands/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/brands/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "brands",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/brands/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/brands/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "brands",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/brands/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/brands/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "brands",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/catalogs/models",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/models",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "models"
+              ],
+              "query": [
+                {
+                  "key": "brandId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/models",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/models",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "models"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brandId\": 1,\n  \"name\": \"texto\",\n  \"vehicleTypeIds\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/models/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/models/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "models",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brandId\": 1,\n  \"name\": \"texto\",\n  \"vehicleTypeIds\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/models/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/models/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "models",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/models/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/models/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "models",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/catalogs/departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/departments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "departments"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/departments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/departments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "departments"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/departments/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/departments/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "departments",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/departments/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/departments/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "departments",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/departments/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/departments/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "departments",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/catalogs/provinces",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/provinces",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "provinces"
+              ],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/provinces",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/provinces",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "provinces"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentId\": 1,\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/provinces/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/provinces/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "provinces",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentId\": 1,\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/provinces/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/provinces/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "provinces",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/provinces/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/provinces/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "provinces",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/catalogs/districts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/districts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "districts"
+              ],
+              "query": [
+                {
+                  "key": "provinceId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/catalogs/districts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/districts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "districts"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provinceId\": 1,\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/catalogs/districts/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/districts/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "districts",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provinceId\": 1,\n  \"code\": \"texto\",\n  \"name\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/catalogs/districts/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/districts/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "districts",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/catalogs/districts/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalogs/districts/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalogs",
+                "districts",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AdminListings",
+      "item": [
+        {
+          "name": "GET /admin/listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "listings"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "Cola de moderación (por defecto PENDING_REVIEW).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/listings/{id}/approve",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/listings/{{id}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "listings",
+                "{{id}}",
+                "approve"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/listings/{id}/reject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/listings/{{id}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "listings",
+                "{{id}}",
+                "reject"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AdminPlans",
+      "item": [
+        {
+          "name": "GET /admin/plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "plans"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/plans",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "plans"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\",\n  \"monthlyPrice\": 10,\n  \"maxActiveListings\": 1,\n  \"maxPhotosPerVehicle\": 1,\n  \"maxFeaturedListings\": 1,\n  \"hasAdvancedStats\": false,\n  \"hasBusinessProfile\": false,\n  \"canExportReports\": false,\n  \"hasPrioritySupport\": false,\n  \"sortOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /admin/plans/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/plans/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "plans",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"texto\",\n  \"name\": \"texto\",\n  \"monthlyPrice\": 10,\n  \"maxActiveListings\": 1,\n  \"maxPhotosPerVehicle\": 1,\n  \"maxFeaturedListings\": 1,\n  \"hasAdvancedStats\": false,\n  \"hasBusinessProfile\": false,\n  \"canExportReports\": false,\n  \"hasPrioritySupport\": false,\n  \"sortOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /admin/plans/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/plans/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "plans",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/plans/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/plans/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "plans",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AdminReports",
+      "item": [
+        {
+          "name": "GET /admin/audit-logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/audit-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "stats"
+              ],
+              "query": []
+            },
+            "description": "Estadísticas generales, con MRR real y simulado por separado.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/reports/users-by-profile-type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/users-by-profile-type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "users-by-profile-type"
+              ],
+              "query": []
+            },
+            "description": "Reporte ADO.NET (SqlDataReader): usuarios por tipo de perfil.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/reports/plan-revenue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/plan-revenue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "plan-revenue"
+              ],
+              "query": []
+            },
+            "description": "Reporte ADO.NET desconectado (SqlDataAdapter + DataSet + DataRelation): ingresos mensuales por plan y origen.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/reports/users.csv",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/users.csv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "users.csv"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/reports/subscriptions.csv",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/subscriptions.csv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports",
+                "subscriptions.csv"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AdminSubscriptions",
+      "item": [
+        {
+          "name": "GET /admin/subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "subscriptions"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/subscriptions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "subscriptions"
+              ],
+              "query": []
+            },
+            "description": "Asigna y activa un plan a un usuario sin pago (queda como COMPLIMENTARY).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"00000000-0000-0000-0000-000000000000\",\n  \"planCode\": \"texto\",\n  \"months\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/subscriptions/{id}/activate",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/subscriptions/{{id}}/activate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "subscriptions",
+                "{{id}}",
+                "activate"
+              ],
+              "query": []
+            },
+            "description": "Activación administrativa de una suscripción PENDING.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/subscriptions/{id}/cancel",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/subscriptions/{{id}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "subscriptions",
+                "{{id}}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "simulated",
+                  "value": "",
+                  "disabled": true,
+                  "description": "boolean"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /admin/payments/demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/payments/demo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "payments",
+                "demo"
+              ],
+              "query": []
+            },
+            "description": "Registra un pago de DEMOSTRACIÓN (IsSimulated=true) y activa la suscripción. No es dinero real.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscriptionId\": \"00000000-0000-0000-0000-000000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AdminUsers",
+      "item": [
+        {
+          "name": "GET /admin/users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "active",
+                  "value": "",
+                  "disabled": true,
+                  "description": "boolean"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /admin/users/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /admin/users/{id}/status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users/{{id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                "{{id}}",
+                "status"
+              ],
+              "query": []
+            },
+            "description": "Bloquea (isActive=false, revoca sesiones) o reactiva una cuenta.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ],
+              "query": []
+            },
+            "description": "Registra una cuenta (PERSONAL o BUSINESS) e inicia sesión.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@ejemplo.com\",\n  \"password\": \"texto\",\n  \"firstName\": \"texto\",\n  \"lastName\": \"texto\",\n  \"phoneNumber\": \"texto\",\n  \"profileType\": \"PERSONAL\",\n  \"businessName\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const r = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', r.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', r.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ],
+              "query": []
+            },
+            "description": "Inicia sesión y devuelve access token (15 min) y refresh token (7 días).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@ejemplo.com\",\n  \"password\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const r = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', r.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', r.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /auth/refresh",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ],
+              "query": []
+            },
+            "description": "Rota el refresh token y emite un nuevo par de tokens. Un token reutilizado revoca la sesión completa.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const r = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', r.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', r.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /auth/logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ],
+              "query": []
+            },
+            "description": "Revoca la sesión asociada al refresh token (o todas con allSessions=true). Idempotente.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"texto\",\n  \"allSessions\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /auth/me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ],
+              "query": []
+            },
+            "description": "Usuario autenticado actual.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/change-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "change-password"
+              ],
+              "query": []
+            },
+            "description": "Cambia la contraseña y revoca todas las sesiones existentes.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"texto\",\n  \"newPassword\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catalogs",
+      "item": [
+        {
+          "name": "GET /catalogs/vehicle-types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/vehicle-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "vehicle-types"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /catalogs/brands",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/brands",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "brands"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /catalogs/models",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/models",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "models"
+              ],
+              "query": [
+                {
+                  "key": "brandId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "vehicleTypeId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "Modelos, opcionalmente filtrados por marca y/o tipo de vehículo compatible.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /catalogs/departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/departments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "departments"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /catalogs/provinces",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/provinces",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "provinces"
+              ],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /catalogs/districts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalogs/districts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalogs",
+                "districts"
+              ],
+              "query": [
+                {
+                  "key": "provinceId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "GET /dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                }
+              ]
+            },
+            "description": "Indicadores reales del usuario. Rango por defecto: últimos 30 días. La evolución mensual requiere estadísticas avanzadas.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /dashboard/export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "export"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                }
+              ]
+            },
+            "description": "Exportación CSV (requiere un plan con exportación de reportes).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "GET /favorites",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "favorites"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /favorites/{listingId}",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/favorites/{{listingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "favorites",
+                "{{listingId}}"
+              ],
+              "query": []
+            },
+            "description": "Agrega a favoritos de forma idempotente: 201 si se creó, 204 si ya existía (sin duplicados).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /favorites/{listingId}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/favorites/{{listingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "favorites",
+                "{{listingId}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "GET /listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings"
+              ],
+              "query": [
+                {
+                  "key": "Q",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Operation",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "VehicleTypeId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "BrandId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "ModelId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "YearMin",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "YearMax",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "PriceMin",
+                  "value": "",
+                  "disabled": true,
+                  "description": "number"
+                },
+                {
+                  "key": "PriceMax",
+                  "value": "",
+                  "disabled": true,
+                  "description": "number"
+                },
+                {
+                  "key": "Currency",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Condition",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "MaxMileage",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "Fuel",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Transmission",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "DepartmentId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "ProvinceId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "DistrictId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "Availability",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "AvailableBy",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Negotiable",
+                  "value": "",
+                  "disabled": true,
+                  "description": "boolean"
+                },
+                {
+                  "key": "WorkUse",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Sort",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "Page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "Búsqueda con filtros, ordenamiento y paginación ejecutados en SQL Server. Los filtros/orden por precio exigen\r\n`currency`: nunca se comparan monedas distintas.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /listings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings"
+              ],
+              "query": []
+            },
+            "description": "Crea una publicación en borrador con una o más modalidades (SALE, RENT, WORK_RENT).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"00000000-0000-0000-0000-000000000000\",\n  \"title\": \"texto\",\n  \"description\": \"texto\",\n  \"advertiserType\": \"PERSONAL\",\n  \"businessName\": \"texto\",\n  \"phoneNumber\": \"texto\",\n  \"whatsAppNumber\": \"texto\",\n  \"contactHours\": \"texto\",\n  \"departmentId\": 1,\n  \"provinceId\": 1,\n  \"districtId\": 1,\n  \"locationReference\": \"texto\",\n  \"additionalConditions\": \"texto\",\n  \"operations\": [\n    {\n      \"operationType\": \"SALE\",\n      \"currency\": \"PEN\",\n      \"salePrice\": 0.01,\n      \"dailyRate\": 0.01,\n      \"weeklyRate\": 0.01,\n      \"monthlyRate\": 0.01,\n      \"guarantee\": 0,\n      \"isNegotiable\": false,\n      \"availableFrom\": \"2026-11-25T07:24:16.296Z\",\n      \"additionalConditions\": \"texto\",\n      \"workRent\": {\n        \"allowedUse\": \"TAXI\",\n        \"shift\": \"DAY\",\n        \"minExperienceYears\": 0,\n        \"licenseType\": \"texto\",\n        \"workZone\": \"texto\",\n        \"monthlyKmLimit\": 1,\n        \"fuelPaidBy\": \"OWNER\",\n        \"maintenancePaidBy\": \"OWNER\",\n        \"insurancePaidBy\": \"OWNER\",\n        \"driverRequirements\": \"texto\"\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /listings/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Detalle público: sin placa completa, sin teléfonos y sin datos de titularidad.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /listings/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Edita una publicación en DRAFT, REJECTED o PAUSED.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"00000000-0000-0000-0000-000000000000\",\n  \"title\": \"texto\",\n  \"description\": \"texto\",\n  \"advertiserType\": \"PERSONAL\",\n  \"businessName\": \"texto\",\n  \"phoneNumber\": \"texto\",\n  \"whatsAppNumber\": \"texto\",\n  \"contactHours\": \"texto\",\n  \"departmentId\": 1,\n  \"provinceId\": 1,\n  \"districtId\": 1,\n  \"locationReference\": \"texto\",\n  \"additionalConditions\": \"texto\",\n  \"operations\": [\n    {\n      \"operationType\": \"SALE\",\n      \"currency\": \"PEN\",\n      \"salePrice\": 0.01,\n      \"dailyRate\": 0.01,\n      \"weeklyRate\": 0.01,\n      \"monthlyRate\": 0.01,\n      \"guarantee\": 0,\n      \"isNegotiable\": false,\n      \"availableFrom\": \"2026-11-25T07:24:16.302Z\",\n      \"additionalConditions\": \"texto\",\n      \"workRent\": {\n        \"allowedUse\": \"TAXI\",\n        \"shift\": \"DAY\",\n        \"minExperienceYears\": 0,\n        \"licenseType\": \"texto\",\n        \"workZone\": \"texto\",\n        \"monthlyKmLimit\": 1,\n        \"fuelPaidBy\": \"OWNER\",\n        \"maintenancePaidBy\": \"OWNER\",\n        \"insurancePaidBy\": \"OWNER\",\n        \"driverRequirements\": \"texto\"\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /listings/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /listings/{id}/advertiser",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}/advertiser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}",
+                "advertiser"
+              ],
+              "query": []
+            },
+            "description": "Información pública del anunciante.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /listings/{id}/views",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}/views",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}",
+                "views"
+              ],
+              "query": []
+            },
+            "description": "Registra una visualización (las del propio anunciante y repetidas en 30 min no cuentan).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /listings/{id}/contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}/contact",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}",
+                "contact"
+              ],
+              "query": []
+            },
+            "description": "Registra el clic de contacto y devuelve el teléfono o el enlace directo de WhatsApp. Es un evento de intención:\r\nno confirma que el contacto comercial se haya concretado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"channel\": \"PHONE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /listings/mine",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "mine"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /listings/mine/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/mine/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "mine",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /listings/{id}/status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}",
+                "status"
+              ],
+              "query": []
+            },
+            "description": "Cambia el estado respetando la máquina de estados. PENDING_REVIEW y reactivaciones validan los límites del plan.\r\nRESERVED/RENTED requieren `operationType`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DRAFT\",\n  \"operationType\": \"SALE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /listings/{id}/featured",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{{id}}/featured",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{{id}}",
+                "featured"
+              ],
+              "query": []
+            },
+            "description": "Destaca o quita el destacado (sujeto al límite de destacados del plan).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isFeatured\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negotiations",
+      "item": [
+        {
+          "name": "POST /negotiations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations"
+              ],
+              "query": []
+            },
+            "description": "Inicia una negociación con la primera oferta del interesado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"00000000-0000-0000-0000-000000000000\",\n  \"operationType\": \"SALE\",\n  \"amount\": 0.01,\n  \"periodicity\": \"DAILY\",\n  \"currency\": \"PEN\",\n  \"message\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /negotiations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true,
+                  "description": "string"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "Negociaciones propias. role: SENT (como interesado) | RECEIVED (como propietario) | ALL.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /negotiations/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Detalle con el historial completo de ofertas.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /negotiations/{id}/offers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations/{{id}}/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations",
+                "{{id}}",
+                "offers"
+              ],
+              "query": []
+            },
+            "description": "Envía una contrapropuesta (solo la contraparte de la última oferta).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 0.01,\n  \"message\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /negotiations/{id}/accept",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations/{{id}}/accept",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations",
+                "{{id}}",
+                "accept"
+              ],
+              "query": []
+            },
+            "description": "Acepta la ÚLTIMA oferta (offerId debe coincidir). Es un acuerdo de precio, no de pago o entrega.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"offerId\": \"00000000-0000-0000-0000-000000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /negotiations/{id}/reject",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations/{{id}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations",
+                "{{id}}",
+                "reject"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /negotiations/{id}/cancel",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/negotiations/{{id}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "negotiations",
+                "{{id}}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "GET /notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "unreadOnly",
+                  "value": "",
+                  "disabled": true,
+                  "description": "boolean"
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /notifications/unread-count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "unread-count"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /notifications/{id}/read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/{{id}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "{{id}}",
+                "read"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /notifications/read-all",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "read-all"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "GET /plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "plans"
+              ],
+              "query": []
+            },
+            "description": "Planes mensuales activos con sus precios, límites y beneficios (datos de la base de datos).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "GET /subscriptions/current",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "current"
+              ],
+              "query": []
+            },
+            "description": "Plan vigente, su suscripción y el consumo de límites.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /subscriptions/payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /subscriptions/change-plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/change-plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "change-plan"
+              ],
+              "query": []
+            },
+            "description": "Solicita un cambio de plan (crea una suscripción PENDING). Elegir FREE cancela la renovación del plan de pago.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /subscriptions/renew",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/renew",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "renew"
+              ],
+              "query": []
+            },
+            "description": "Solicita la renovación del plan actual (suscripción PENDING).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /subscriptions/{id}/pay",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/{{id}}/pay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "{{id}}",
+                "pay"
+              ],
+              "query": []
+            },
+            "description": "Completa el pago DE DEMOSTRACIÓN (si está habilitado) y activa la suscripción. No se cobra dinero real.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /subscriptions/{id}/cancel",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/subscriptions/{{id}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "subscriptions",
+                "{{id}}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "Cancela una suscripción pendiente, o detiene la renovación de la activa (conserva el plan hasta su vencimiento).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET /users/profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Obtiene el perfil propio. El usuario se toma del token, nunca de la URL (sin IDOR).",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /users/profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Actualiza el perfil propio (PERSONAL o BUSINESS).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"texto\",\n  \"lastName\": \"texto\",\n  \"phoneNumber\": \"texto\",\n  \"documentNumber\": \"texto\",\n  \"districtId\": 1,\n  \"address\": \"texto\",\n  \"profileType\": \"PERSONAL\",\n  \"businessName\": \"texto\",\n  \"ruc\": \"VALOR\",\n  \"businessDescription\": \"texto\",\n  \"website\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "POST /vehicles",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles"
+              ],
+              "query": []
+            },
+            "description": "Registra un vehículo. Valida los campos técnicos según el tipo y la compatibilidad marca/modelo/tipo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleTypeId\": 1,\n  \"brandId\": 1,\n  \"modelId\": 1,\n  \"version\": \"texto\",\n  \"manufactureYear\": 1,\n  \"modelYear\": 1,\n  \"plate\": \"texto\",\n  \"color\": \"texto\",\n  \"mileage\": 0,\n  \"condition\": \"NEW\",\n  \"previousOwners\": 0,\n  \"fuelType\": \"GASOLINE\",\n  \"transmission\": \"MANUAL\",\n  \"engineDisplacementCc\": 0,\n  \"doors\": 0,\n  \"seats\": 1,\n  \"traction\": \"FWD\",\n  \"loadCapacityKg\": 0,\n  \"hasAirConditioning\": false,\n  \"hasGps\": false,\n  \"hasInsurance\": false,\n  \"hasValidSoat\": false,\n  \"hasValidTechnicalReview\": false,\n  \"description\": \"texto\",\n  \"legalOwnerName\": \"texto\",\n  \"legalOwnerRelationship\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "",
+                  "disabled": true,
+                  "description": "integer"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /vehicles/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /vehicles/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleTypeId\": 1,\n  \"brandId\": 1,\n  \"modelId\": 1,\n  \"version\": \"texto\",\n  \"manufactureYear\": 1,\n  \"modelYear\": 1,\n  \"plate\": \"texto\",\n  \"color\": \"texto\",\n  \"mileage\": 0,\n  \"condition\": \"NEW\",\n  \"previousOwners\": 0,\n  \"fuelType\": \"GASOLINE\",\n  \"transmission\": \"MANUAL\",\n  \"engineDisplacementCc\": 0,\n  \"doors\": 0,\n  \"seats\": 1,\n  \"traction\": \"FWD\",\n  \"loadCapacityKg\": 0,\n  \"hasAirConditioning\": false,\n  \"hasGps\": false,\n  \"hasInsurance\": false,\n  \"hasValidSoat\": false,\n  \"hasValidTechnicalReview\": false,\n  \"description\": \"texto\",\n  \"legalOwnerName\": \"texto\",\n  \"legalOwnerRelationship\": \"texto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /vehicles/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /vehicles/{id}/images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}/images",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}",
+                "images"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /vehicles/{id}/images",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}/images",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}",
+                "images"
+              ],
+              "query": []
+            },
+            "description": "Carga una fotografía (multipart, campo \"file\"). Máx. 5 MB; JPEG, PNG o WebP verificados por su contenido.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /vehicles/{id}/images/{imageId}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}/images/{{imageId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}",
+                "images",
+                "{{imageId}}"
+              ],
+              "query": []
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /vehicles/{id}/images/order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}/images/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}",
+                "images",
+                "order"
+              ],
+              "query": []
+            },
+            "description": "Define el orden completo de las fotografías.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"imageIds\": [\n    \"00000000-0000-0000-0000-000000000000\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /vehicles/{id}/images/{imageId}/cover",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vehicles/{{id}}/images/{{imageId}}/cover",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vehicles",
+                "{{id}}",
+                "images",
+                "{{imageId}}",
+                "cover"
+              ],
+              "query": []
+            },
+            "description": "Selecciona la fotografía de portada.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

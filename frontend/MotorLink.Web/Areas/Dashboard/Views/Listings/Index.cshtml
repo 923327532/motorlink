@@ -1,0 +1,129 @@
+@model ListingsViewModel
+@functions {
+    public sealed record RowAction(string Label, string Action, string? Status = null, string? Op = null, string? Confirm = null, bool Danger = false, bool Divider = false);
+
+    private static List<RowAction> Actions(MyListing l, List<OperationInfo> freeOps)
+    {
+        var a = new List<RowAction>();
+        void S(string label, string status, string? op = null, string? confirm = null) => a.Add(new RowAction(label, "Status", status, op, confirm));
+        switch (l.Status)
+        {
+            case "DRAFT": S("Enviar a revisión", "PENDING_REVIEW"); break;
+            case "PENDING_REVIEW": S("Volver a borrador", "DRAFT"); break;
+            case "PUBLISHED":
+                S("Pausar publicación", "PAUSED");
+                foreach (var o in freeOps.Where(o => o.OperationType != "SALE")) S($"Marcar alquilada ({Ui.Operation(o.OperationType)})", "RENTED", o.OperationType);
+                foreach (var o in freeOps) S($"Reservar ({Ui.Operation(o.OperationType)})", "RESERVED", o.OperationType);
+                S("Marcar como vendido", "SOLD", null, "Se cerrarán todas las modalidades activas y se cancelarán las negociaciones abiertas.");
+                a.Add(new RowAction(l.IsFeatured ? "Quitar destacado" : "Destacar publicación", "Feature", (!l.IsFeatured).ToString().ToLowerInvariant()));
+                break;
+            case "PAUSED": S("Reanudar publicación", "PUBLISHED"); break;
+            case "RESERVED":
+            case "RENTED": S("Volver a disponible", "PUBLISHED"); S("Marcar como vendido", "SOLD", null, "Se cerrarán todas las modalidades activas."); break;
+            case "REJECTED": S("Volver a borrador", "DRAFT"); break;
+            case "ARCHIVED": S("Restaurar como borrador", "DRAFT"); break;
+        }
+        if (l.Status != "ARCHIVED") { a.Add(new RowAction("", "", Divider: true)); S("Archivar", "ARCHIVED", null, "La publicación dejará de mostrarse y se cancelarán las negociaciones abiertas."); }
+        if (l.Status is "DRAFT" or "REJECTED" or "ARCHIVED")
+        {
+            a.Add(new RowAction("", "", Divider: true));
+            a.Add(new RowAction("Eliminar", "Delete", Confirm: $"Se eliminará la publicación «{l.Title}». Esta acción no se puede deshacer.", Danger: true));
+        }
+        return a;
+    }
+}
+
+@{
+    var tabs = new (string? Key, string Label)[] { (null, "Todas"), ("DRAFT", "Borradores"), ("PENDING_REVIEW", "En revisión"), ("PUBLISHED", "Publicadas"), ("PAUSED", "Pausadas"), ("RESERVED", "Reservadas"), ("RENTED", "Alquiladas"), ("SOLD", "Vendidas"), ("REJECTED", "Rechazadas"), ("ARCHIVED", "Archivadas") };
+    var u = Model.Plan.Usage;
+}
+<div class="page-title">
+    <div><h2>Mis publicaciones</h2><p>Gestiona el estado, las condiciones comerciales y la visibilidad de tus publicaciones.</p></div>
+    <a class="btn btn-primary" href="/panel/publish"><i data-lucide="plus"></i>Nueva publicación</a>
+</div>
+
+<div class="notice mb-3">
+    <i data-lucide="gauge"></i>
+    <div class="w-100">
+        Plan <strong>@Model.Plan.Plan.Name</strong>: usas <strong>@u.ActiveListings de @u.MaxActiveListings</strong> publicaciones activas y @u.FeaturedListings de @u.MaxFeaturedListings destacadas.
+        <progress class="ml-progress mt-2 @(u.ActiveListings >= u.MaxActiveListings ? "is-full" : "")" value="@u.ActiveListings" max="@Math.Max(u.MaxActiveListings, 1)" aria-label="Uso de publicaciones activas"></progress>
+    </div>
+    @if (u.ActiveListings >= u.MaxActiveListings) { <a class="btn btn-sm btn-primary nowrap" href="/planes">Mejorar plan</a> }
+</div>
+
+<nav class="nav-tabs-ml" aria-label="Filtrar por estado">
+    @foreach (var t in tabs) { <a href="/panel/listings@(t.Key is null ? "" : "?status=" + t.Key)" class="@(Model.Status == t.Key ? "is-active" : "")">@t.Label</a> }
+</nav>
+
+<section class="ml-card">
+    @if (Model.Page.Items.Count == 0)
+    {
+        <partial name="_EmptyState" model='new EmptyStateModel("megaphone", Model.Status is null ? "Aún no tienes publicaciones" : "No hay publicaciones en este estado", "Publica un vehículo para venderlo, alquilarlo u ofrecerlo para trabajar.", "Publicar vehículo", "/panel/publish")' />
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="ml-table">
+                <caption class="visually-hidden">Mis publicaciones</caption>
+                <thead><tr><th>Publicación</th><th>Estado</th><th>Modalidades y precio</th><th>Actualizada</th><th><span class="visually-hidden">Acciones</span></th></tr></thead>
+                <tbody>
+                @foreach (var l in Model.Page.Items)
+                {
+                    var activeOps = l.Operations.Where(o => o.IsActive).ToList();
+                    var freeOps = activeOps.Where(o => o.Status == "AVAILABLE").ToList();
+                    var returnStatus = Model.Status;
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img class="thumb" src="@Ui.Img(l.CoverUrl)" alt="" width="64" height="48" loading="lazy" />
+                                <div>
+                                    <div class="fw-semibold">@l.Title</div>
+                                    <div class="small text-muted">@l.VehicleSummary · @l.PhotoCount foto@(l.PhotoCount == 1 ? "" : "s")</div>
+                                    @if (l.IsFeatured) { <span class="ml-badge ml-badge--info mt-1">Destacada</span> }
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="ml-badge ml-badge--@Ui.Tone(l.Status)">@Ui.ListingStatus(l.Status)</span>
+                            @if (l.Status == "REJECTED" && !string.IsNullOrWhiteSpace(l.RejectionReason)) { <div class="small text-danger mt-1">Motivo: @l.RejectionReason</div> }
+                        </td>
+                        <td>
+                            @foreach (var o in activeOps)
+                            {
+                                <div class="small"><strong>@Ui.Operation(o.OperationType):</strong> @(o.OperationType == "SALE" ? Ui.Money(o.Currency, o.SalePrice) : Ui.Money(o.Currency, o.DailyRate ?? o.WeeklyRate ?? o.MonthlyRate) + " " + (o.DailyRate is not null ? "por día" : o.WeeklyRate is not null ? "por semana" : "por mes"))
+                                    @if (o.Status != "AVAILABLE") { <span class="ml-badge ml-badge--warning">@o.Status.ToLowerInvariant()</span> }</div>
+                            }
+                        </td>
+                        <td class="text-muted">@Ui.Date(l.UpdatedAt ?? l.CreatedAt)</td>
+                        <td>
+                            <div class="table-actions">
+                                @if (l.Status is "PUBLISHED" or "RESERVED" or "RENTED") { <a class="btn btn-sm btn-light" href="/vehiculos/@l.Id">Ver</a> }
+                                @if (l.Status is "DRAFT" or "REJECTED" or "PAUSED") { <a class="btn btn-sm btn-light" href="/panel/publish/@l.VehicleId">@(l.Status == "DRAFT" ? "Continuar" : "Editar")</a> }
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Más acciones para @l.Title">Acciones</button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        @foreach (var a in Actions(l, freeOps))
+                                        {
+                                            if (a.Divider) { <li><hr class="dropdown-divider" /></li> continue; }
+                                            <li>
+                                                <form asp-action="@a.Action" method="post" data-no-loading>
+                                                    <input type="hidden" name="id" value="@l.Id" />
+                                                    @if (a.Action == "Status") { <input type="hidden" name="status" value="@a.Status" /><input type="hidden" name="returnStatus" value="@returnStatus" /> }
+                                                    @if (a.Op is not null) { <input type="hidden" name="operationType" value="@a.Op" /> }
+                                                    @if (a.Action == "Feature") { <input type="hidden" name="featured" value="@a.Status" /> }
+                                                    <button type="submit" class="dropdown-item w-100 @(a.Danger ? "text-danger" : "")" data-confirm="@a.Confirm" data-confirm-title="@a.Label" data-confirm-ok="@a.Label" data-confirm-variant="@(a.Danger ? "danger" : "primary")">@a.Label</button>
+                                                </form>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-foot"><span>@Model.Page.TotalCount publicación@(Model.Page.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page.Page, totalPages = Model.Page.TotalPages })</div>
+    }
+</section>

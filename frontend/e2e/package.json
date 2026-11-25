@@ -1,0 +1,13 @@
+{
+  "name": "motorlink-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Pruebas de extremo a extremo con un navegador real (Chrome) contra la API y el frontend en ejecución.",
+  "scripts": {
+    "public": "node public.mjs",
+    "flows": "node flows.mjs",
+    "wizard": "node wizard.mjs",
+    "sweep": "node sweep.mjs"
+  },
+  "dependencies": { "puppeteer-core": "^24.0.0" }
+}

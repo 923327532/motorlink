@@ -1,0 +1,7 @@
+@model ApiError
+@{
+    ViewData["Title"] = "No pudimos cargar la información";
+    var empty = new EmptyStateModel("cloud-off", "No pudimos cargar la información",
+        Model.Status == 503 ? Model.Message : "El servicio respondió con un error. Inténtalo nuevamente.", "Reintentar", Context.Request.Path + Context.Request.QueryString);
+}
+<section class="ml-section"><div class="ml-container"><partial name="_EmptyState" model="empty" /></div></section>

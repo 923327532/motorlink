@@ -1,0 +1,65 @@
+@{
+    var isAdmin = User.IsInRole("ADMIN");
+    var nav = new SideNavModel(NavMenus.Dashboard);
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "Mi panel") · MotorLink</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
+    <meta name="robots" content="noindex" />
+    <partial name="_Styles" />
+    @RenderSection("Head", required: false)
+</head>
+<body data-auth="true">
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <div class="app-shell">
+        <aside class="app-sidebar" aria-label="Menú del panel">
+            <div class="app-sidebar__brand"><partial name="_Brand" model="true" /></div>
+            <partial name="_SideNav" model="nav" />
+            <div class="app-sidebar__foot">
+                <a class="side-nav" href="/"><span class="d-flex align-items-center gap-3 px-2 py-2 text-white-50"><i data-lucide="arrow-left"></i>Ir al portal</span></a>
+                <form method="post" asp-area="" asp-controller="Auth" asp-action="Logout" data-no-loading class="side-nav">
+                    <button type="submit"><i data-lucide="log-out"></i>Cerrar sesión</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="offcanvas offcanvas-start app-sidebar-mobile" tabindex="-1" id="app-menu" aria-label="Menú del panel">
+            <div class="offcanvas-header"><partial name="_Brand" model="true" /><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button></div>
+            <div class="offcanvas-body p-0"><partial name="_SideNav" model="nav" />
+                <form method="post" asp-area="" asp-controller="Auth" asp-action="Logout" data-no-loading class="side-nav"><button type="submit"><i data-lucide="log-out"></i>Cerrar sesión</button></form>
+            </div>
+        </div>
+
+        <div class="app-main">
+            <header class="app-topbar">
+                <button class="icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#app-menu" aria-controls="app-menu" aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+                <h1 class="truncate">@(ViewData["Title"] ?? "Mi panel")</h1>
+                <div class="spacer"></div>
+                <a class="btn btn-primary d-none d-sm-inline-flex" href="/panel/publish"><i data-lucide="plus"></i>Publicar vehículo</a>
+                @await Component.InvokeAsync("NotificationBell")
+                <div class="dropdown">
+                    <button class="btn btn-light d-flex align-items-center gap-2 p-1 pe-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de tu cuenta">
+                        <span class="avatar" aria-hidden="true">@Ui.Initials(User.Identity?.Name)</span>
+                        <span class="d-none d-md-inline small fw-semibold">@User.Identity?.Name</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/panel/profile"><i data-lucide="user"></i>Mi perfil</a></li>
+                        <li><a class="dropdown-item" href="/panel/security"><i data-lucide="lock-keyhole"></i>Seguridad</a></li>
+                        @if (isAdmin) { <li><a class="dropdown-item" href="/admin"><i data-lucide="shield-check"></i>Administración</a></li> }
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><form method="post" asp-area="" asp-controller="Auth" asp-action="Logout" data-no-loading><button type="submit" class="dropdown-item w-100"><i data-lucide="log-out"></i>Cerrar sesión</button></form></li>
+                    </ul>
+                </div>
+            </header>
+            <main class="app-content" id="contenido">@RenderBody()</main>
+        </div>
+    </div>
+    <partial name="_Toasts" />
+    <partial name="_Scripts" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

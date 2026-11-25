@@ -1,0 +1,16 @@
+@model PagedResult<ListingSummary>
+<div class="page-title">
+    <div><h2>Favoritos</h2><p>Los vehículos que guardaste para revisar después.</p></div>
+    <a class="btn btn-light" href="/vehiculos">Explorar vehículos</a>
+</div>
+@if (Model.Items.Count == 0)
+{
+    <section class="ml-card"><partial name="_EmptyState" model='new EmptyStateModel("heart", "Todavía no guardaste favoritos", "Pulsa el corazón en cualquier publicación para guardarla aquí.", "Explorar vehículos", "/vehiculos")' /></section>
+}
+else
+{
+    <div class="listing-grid">
+        @foreach (var l in Model.Items) { <div data-card-wrap>@await Component.InvokeAsync("ListingCard", new { listing = l, isFavorite = true, removeOnUnfavorite = true })</div> }
+    </div>
+    <div class="mt-4">@await Component.InvokeAsync("Pagination", new { page = Model.Page, totalPages = Model.TotalPages })</div>
+}

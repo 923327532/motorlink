@@ -1,0 +1,15 @@
+@model int
+<div class="dropdown bell" data-bell="@ViewData["BasePath"]">
+    <button class="icon-btn" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notificaciones">
+        <i data-lucide="bell"></i>
+        <span class="bell__dot" data-bell-count @(Model == 0 ? "hidden" : null)>@(Model > 99 ? "99+" : Model.ToString())</span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end bell-menu">
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+            <strong>Notificaciones</strong>
+            <button type="button" class="btn btn-sm btn-ghost" data-bell-readall>Marcar como leídas</button>
+        </div>
+        <div data-bell-list></div>
+        <a class="d-block text-center py-2 small fw-semibold" href="@ViewData["AllUrl"]">Ver todas</a>
+    </div>
+</div>

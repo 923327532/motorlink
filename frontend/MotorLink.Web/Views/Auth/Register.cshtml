@@ -1,0 +1,84 @@
+@model RegisterViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Crear cuenta";
+}
+<h1>Crea tu cuenta</h1>
+<p class="text-muted mb-4">Empieza gratis: publica hasta 2 vehículos, guarda favoritos y negocia con propietarios.</p>
+
+<form asp-action="Register" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="mb-3" role="alert"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <fieldset class="mb-4">
+        <legend class="form-label">Tipo de cuenta</legend>
+        <div class="row g-2">
+            <div class="col-sm-6">
+                <label class="option-card h-100">
+                    <input type="radio" name="ProfileType" value="PERSONAL" data-account-choice @(Model.ProfileType != "BUSINESS" ? "checked" : null) />
+                    <span><strong>Personal</strong><span class="small text-muted">Compro, vendo o alquilo mis propios vehículos.</span></span>
+                </label>
+            </div>
+            <div class="col-sm-6">
+                <label class="option-card h-100">
+                    <input type="radio" name="ProfileType" value="BUSINESS" data-account-choice @(Model.ProfileType == "BUSINESS" ? "checked" : null) />
+                    <span><strong>Empresarial</strong><span class="small text-muted">Concesionaria, flota o negocio de alquiler.</span></span>
+                </label>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="mb-3" data-business-fields hidden>
+        <label asp-for="BusinessName" class="form-label"></label>
+        <input asp-for="BusinessName" class="form-control" autocomplete="organization" />
+        <span asp-validation-for="BusinessName" class="field-validation-error"></span>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+            <label asp-for="FirstName" class="form-label"></label>
+            <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+            <span asp-validation-for="FirstName" class="field-validation-error"></span>
+        </div>
+        <div class="col-sm-6">
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+            <span asp-validation-for="LastName" class="field-validation-error"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" autocomplete="username" inputmode="email" />
+        <span asp-validation-for="Email" class="field-validation-error"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" autocomplete="tel" inputmode="tel" />
+        <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+            <label asp-for="Password" class="form-label"></label>
+            <div class="input-affix">
+                <input asp-for="Password" class="form-control pe-5" autocomplete="new-password" aria-describedby="pwd-help" />
+                <span class="affix"><button type="button" class="btn btn-ghost btn-sm" data-toggle-password="#Password" aria-label="Mostrar contraseña" aria-pressed="false"><i data-lucide="eye"></i></button></span>
+            </div>
+            <span asp-validation-for="Password" class="field-validation-error"></span>
+        </div>
+        <div class="col-sm-6">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+        </div>
+        <div class="col-12 form-text" id="pwd-help">Mínimo 8 caracteres, con mayúscula, minúscula y un número.</div>
+    </div>
+    <div class="form-check mb-4">
+        <input asp-for="AcceptTerms" class="form-check-input" />
+        <label asp-for="AcceptTerms" class="form-check-label small">Acepto los <a href="/terminos" target="_blank" rel="noopener">términos y condiciones</a> y la <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>.</label>
+        <span asp-validation-for="AcceptTerms" class="field-validation-error"></span>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg w-100">Crear cuenta</button>
+</form>
+<p class="mt-4 text-center text-muted">¿Ya tienes cuenta? <a class="fw-semibold" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">Iniciar sesión</a></p>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

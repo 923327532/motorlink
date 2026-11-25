@@ -1,0 +1,11 @@
+@model EmptyStateModel
+@* Estado vacío reutilizable: icono, título, texto y una acción opcional. *@
+<div class="empty">
+    <div class="empty__icon"><i data-lucide="@Model.Icon" class="icon--lg"></i></div>
+    <h3>@Model.Title</h3>
+    <p>@Model.Text</p>
+    @if (Model.ActionUrl is not null)
+    {
+        <a class="btn btn-primary" href="@Model.ActionUrl">@Model.ActionText</a>
+    }
+</div>

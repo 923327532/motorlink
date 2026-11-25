@@ -1,0 +1,38 @@
+@model ProfileViewModel
+<div class="page-title"><div><h2>Mi perfil</h2><p>Datos de tu cuenta y, si corresponde, de tu negocio.</p></div></div>
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <form class="ml-card" asp-action="Index" method="post" novalidate>
+            <div class="ml-card__body stack">
+                <div asp-validation-summary="ModelOnly" role="alert"></div>
+                <div><label class="form-label" for="email-ro">Correo electrónico</label><input id="email-ro" class="form-control" value="@Model.Email" readonly aria-describedby="email-help" /><div class="form-text" id="email-help">El correo identifica tu cuenta y no se puede cambiar.</div></div>
+                <div>
+                    <label asp-for="ProfileType" class="form-label"></label>
+                    <select asp-for="ProfileType" class="form-select" data-profile-type>
+                        <option value="PERSONAL">Personal</option>
+                        <option value="BUSINESS">Empresarial</option>
+                    </select>
+                </div>
+                <div class="row g-3">
+                    <div class="col-sm-6"><label asp-for="FirstName" class="form-label"></label><input asp-for="FirstName" class="form-control" autocomplete="given-name" /><span asp-validation-for="FirstName" class="field-validation-error"></span></div>
+                    <div class="col-sm-6"><label asp-for="LastName" class="form-label"></label><input asp-for="LastName" class="form-control" autocomplete="family-name" /><span asp-validation-for="LastName" class="field-validation-error"></span></div>
+                    <div class="col-sm-6"><label asp-for="PhoneNumber" class="form-label"></label><input asp-for="PhoneNumber" class="form-control" autocomplete="tel" inputmode="tel" /><span asp-validation-for="PhoneNumber" class="field-validation-error"></span></div>
+                    <div class="col-sm-6"><label asp-for="DocumentNumber" class="form-label"></label><input asp-for="DocumentNumber" class="form-control" /><span asp-validation-for="DocumentNumber" class="field-validation-error"></span></div>
+                </div>
+                <div data-business-only class="stack">
+                    <hr class="divider my-2" />
+                    <h3 class="fs-6 mb-0">Datos del negocio</h3>
+                    <div><label asp-for="BusinessName" class="form-label"></label><input asp-for="BusinessName" class="form-control" autocomplete="organization" /><span asp-validation-for="BusinessName" class="field-validation-error"></span></div>
+                    <div class="row g-3">
+                        <div class="col-sm-6"><label asp-for="Ruc" class="form-label"></label><input asp-for="Ruc" class="form-control" inputmode="numeric" maxlength="11" /><span asp-validation-for="Ruc" class="field-validation-error"></span></div>
+                        <div class="col-sm-6"><label asp-for="Website" class="form-label"></label><input asp-for="Website" class="form-control" inputmode="url" placeholder="https://" /><span asp-validation-for="Website" class="field-validation-error"></span></div>
+                    </div>
+                    <div><label asp-for="BusinessDescription" class="form-label"></label><textarea asp-for="BusinessDescription" class="form-control" rows="3"></textarea><span asp-validation-for="BusinessDescription" class="field-validation-error"></span></div>
+                    <p class="hint mb-0">El perfil empresarial público (nombre comercial en tus publicaciones) requiere un plan que lo incluya.</p>
+                </div>
+            </div>
+            <div class="ml-card__head border-top border-bottom-0"><span></span><button type="submit" class="btn btn-primary">Guardar cambios</button></div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

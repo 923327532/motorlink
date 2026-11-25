@@ -1,0 +1,66 @@
+@model List<PlanInfo>
+<div class="page-title">
+    <div><h2>Planes</h2><p>Precios, límites y beneficios se guardan en la base de datos. Los cambios aplican de inmediato a todos los suscriptores.</p></div>
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#plan-modal" data-fill='{"id":"","code":"","name":"","monthlyPrice":"0","maxActiveListings":"1","maxPhotosPerVehicle":"5","maxFeaturedListings":"0","hasAdvancedStats":false,"hasBusinessProfile":false,"canExportReports":false,"hasPrioritySupport":false,"sortOrder":"10"}'><i data-lucide="plus"></i>Nuevo plan</button>
+</div>
+<section class="ml-card">
+    <div class="table-wrap"><table class="ml-table">
+        <caption class="visually-hidden">Planes</caption>
+        <thead><tr><th>Plan</th><th class="num">Precio</th><th class="num">Publicaciones</th><th class="num">Fotos</th><th class="num">Destacadas</th><th>Beneficios</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var p in Model)
+        {
+            var free = p.Code == "FREE";
+            <tr>
+                <td><div class="fw-semibold">@p.Name</div><div class="small text-muted tabular">@p.Code</div></td>
+                <td class="num">@(p.MonthlyPrice == 0 ? "S/ 0" : Ui.Money("PEN", p.MonthlyPrice))</td>
+                <td class="num">@p.MaxActiveListings</td><td class="num">@p.MaxPhotosPerVehicle</td><td class="num">@p.MaxFeaturedListings</td>
+                <td class="small">
+                    @(p.HasAdvancedStats ? "Estadísticas avanzadas" : "Estadísticas básicas")@(p.HasBusinessProfile ? " · Perfil empresarial" : "")@(p.CanExportReports ? " · Exportación" : "")@(p.HasPrioritySupport ? " · Soporte prioritario" : "")
+                </td>
+                <td><span class="ml-badge @(p.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(p.IsActive ? "Activo" : "Inactivo")</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#plan-modal" data-fill='@Json.Serialize(new { id = p.Id, code = p.Code, name = p.Name, monthlyPrice = p.MonthlyPrice, maxActiveListings = p.MaxActiveListings, maxPhotosPerVehicle = p.MaxPhotosPerVehicle, maxFeaturedListings = p.MaxFeaturedListings, hasAdvancedStats = p.HasAdvancedStats, hasBusinessProfile = p.HasBusinessProfile, canExportReports = p.CanExportReports, hasPrioritySupport = p.HasPrioritySupport, sortOrder = p.SortOrder })'>Editar</button>
+                        @if (!free)
+                        {
+                            <form asp-action="SetActive" method="post" data-no-loading><input type="hidden" name="id" value="@p.Id" /><input type="hidden" name="active" value="@((!p.IsActive).ToString().ToLowerInvariant())" />
+                                <button type="submit" class="btn btn-sm btn-light">@(p.IsActive ? "Desactivar" : "Activar")</button></form>
+                            <form asp-action="Delete" method="post" data-no-loading><input type="hidden" name="id" value="@p.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-confirm="Solo se puede eliminar un plan sin suscripciones asociadas; de lo contrario, desactívalo." data-confirm-title="Eliminar plan" data-confirm-ok="Eliminar" data-confirm-variant="danger">Eliminar</button></form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table></div>
+</section>
+
+<div class="modal fade" id="plan-modal" tabindex="-1" aria-labelledby="plan-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <form class="modal-content" asp-action="Save" method="post">
+            <div class="modal-header"><h2 class="modal-title" id="plan-title">Plan</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id" />
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label" for="pl-code">Código *</label><input id="pl-code" name="code" class="form-control text-uppercase" required maxlength="30" pattern="[A-Z][A-Z0-9_]{1,29}" /></div>
+                    <div class="col-md-5"><label class="form-label" for="pl-name">Nombre *</label><input id="pl-name" name="name" class="form-control" required maxlength="60" /></div>
+                    <div class="col-md-3"><label class="form-label" for="pl-price">Precio mensual (S/) *</label><input id="pl-price" name="monthlyPrice" type="number" min="0" step="0.01" class="form-control" required /></div>
+                    <div class="col-md-4"><label class="form-label" for="pl-list">Publicaciones activas *</label><input id="pl-list" name="maxActiveListings" type="number" min="0" class="form-control" required /></div>
+                    <div class="col-md-4"><label class="form-label" for="pl-photos">Fotos por vehículo *</label><input id="pl-photos" name="maxPhotosPerVehicle" type="number" min="0" class="form-control" required /></div>
+                    <div class="col-md-4"><label class="form-label" for="pl-feat">Destacadas *</label><input id="pl-feat" name="maxFeaturedListings" type="number" min="0" class="form-control" required /></div>
+                    <div class="col-md-4"><label class="form-label" for="pl-order">Orden</label><input id="pl-order" name="sortOrder" type="number" class="form-control" /></div>
+                    <div class="col-12"><fieldset><legend class="form-label">Beneficios</legend>
+                        <div class="row g-2">
+                            <div class="col-sm-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="pl-adv" name="hasAdvancedStats" value="true" /><label class="form-check-label" for="pl-adv">Estadísticas avanzadas</label></div></div>
+                            <div class="col-sm-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="pl-biz" name="hasBusinessProfile" value="true" /><label class="form-check-label" for="pl-biz">Perfil empresarial</label></div></div>
+                            <div class="col-sm-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="pl-exp" name="canExportReports" value="true" /><label class="form-check-label" for="pl-exp">Exportación de reportes</label></div></div>
+                            <div class="col-sm-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="pl-sup" name="hasPrioritySupport" value="true" /><label class="form-check-label" for="pl-sup">Soporte prioritario</label></div></div>
+                        </div></fieldset></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar plan</button></div>
+        </form>
+    </div>
+</div>

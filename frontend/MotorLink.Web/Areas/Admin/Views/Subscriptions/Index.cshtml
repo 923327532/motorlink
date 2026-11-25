@@ -1,0 +1,61 @@
+@model SubscriptionsViewModel
+@{
+    var tabs = new (string? K, string L)[] { (null, "Todas"), ("ACTIVE", "Activas"), ("PENDING", "Pendientes"), ("EXPIRED", "Vencidas"), ("CANCELLED", "Canceladas") };
+    string Who(Guid id) => Model.Users.TryGetValue(id, out var e) ? e : id.ToString()[..8];
+}
+<div class="page-title">
+    <div><h2>Suscripciones</h2><p>Planes de los usuarios. Las activaciones administrativas quedan como «otorgadas» y se auditan.</p></div>
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#assign-modal"><i data-lucide="user-plus"></i>Asignar plan</button>
+</div>
+<nav class="nav-tabs-ml" aria-label="Estado">@foreach (var t in tabs) { <a href="/admin/subscriptions@(t.K is null ? "" : "?status=" + t.K)" class="@(Model.Status == t.K ? "is-active" : "")">@t.L</a> }</nav>
+<section class="ml-card">
+    @if (Model.Page.Items.Count == 0) { <partial name="_EmptyState" model='new EmptyStateModel("badge-check", "No hay suscripciones", "No se encontraron suscripciones en este estado.")' /> }
+    else
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Suscripciones</caption>
+            <thead><tr><th>Usuario</th><th>Plan</th><th>Estado</th><th>Origen</th><th>Inicio</th><th>Vencimiento</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var s in Model.Page.Items)
+            {
+                <tr>
+                    <td>@Who(s.UserId)</td><td class="fw-semibold">@s.PlanName</td>
+                    <td><span class="ml-badge ml-badge--@Ui.Tone(s.Status)">@Ui.SubscriptionStatus(s.Status)</span></td>
+                    <td>@if (s.PaymentMode == "SIMULATED") { <span class="ml-badge ml-badge--demo">Demostración</span> } else { @Ui.PaymentMode(s.PaymentMode) }</td>
+                    <td>@Ui.Date(s.StartsAt)</td><td>@(s.EndsAt is null ? "—" : Ui.Date(s.EndsAt))</td>
+                    <td>
+                        <div class="table-actions">
+                            @if (s.Status == "PENDING")
+                            {
+                                <form asp-action="Activate" method="post" data-no-loading><input type="hidden" name="id" value="@s.Id" /><button type="submit" class="btn btn-sm btn-success" data-confirm="El plan se activará sin pago (otorgado por administración)." data-confirm-title="Activar suscripción" data-confirm-ok="Activar">Activar</button></form>
+                            }
+                            @if (s.Status is "PENDING" || (s.Status == "ACTIVE" && s.MonthlyPrice > 0 && s.CancelledAt is null))
+                            {
+                                <form asp-action="Cancel" method="post" data-no-loading><input type="hidden" name="id" value="@s.Id" /><button type="submit" class="btn btn-sm btn-outline-danger" data-confirm="@(s.Status == "PENDING" ? "Se cancelará la solicitud pendiente." : "Se detendrá la renovación; el plan sigue activo hasta su vencimiento.")" data-confirm-title="Cancelar suscripción" data-confirm-ok="Cancelar" data-confirm-variant="danger">Cancelar</button></form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+        <div class="table-foot"><span>@Model.Page.TotalCount suscripción@(Model.Page.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page.Page, totalPages = Model.Page.TotalPages })</div>
+    }
+</section>
+
+<div class="modal fade" id="assign-modal" tabindex="-1" aria-labelledby="assign-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" asp-action="Assign" method="post">
+            <div class="modal-header"><h2 class="modal-title" id="assign-title">Asignar plan a un usuario</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body stack">
+                <div class="notice"><i data-lucide="info"></i><div>El plan se activa de inmediato como <strong>otorgado</strong> (sin pago) y no cuenta como ingreso real ni simulado.</div></div>
+                <div><label class="form-label" for="as-user">Usuario *</label>
+                    <select id="as-user" name="userId" class="form-select" required><option value="">Selecciona</option>@foreach (var (id, email) in Model.Users.OrderBy(x => x.Value)) { <option value="@id">@email</option> }</select></div>
+                <div><label class="form-label" for="as-plan">Plan *</label>
+                    <select id="as-plan" name="planCode" class="form-select" required>@foreach (var p in Model.Plans.Where(p => p.IsActive).OrderBy(p => p.SortOrder)) { <option value="@p.Code">@p.Name (@(p.MonthlyPrice == 0 ? "S/ 0" : Ui.Money("PEN", p.MonthlyPrice)))</option> }</select></div>
+                <div><label class="form-label" for="as-months">Duración (meses) *</label><input id="as-months" name="months" type="number" min="1" max="36" value="1" class="form-control" required /></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Asignar plan</button></div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+@model VehiclesViewModel
+<div class="page-title">
+    <div><h2>Mis vehículos</h2><p>Vehículos registrados en tu cuenta. Cada uno puede tener una publicación con varias modalidades.</p></div>
+    <a class="btn btn-primary" href="/panel/publish"><i data-lucide="plus"></i>Registrar vehículo</a>
+</div>
+
+<section class="ml-card">
+    @if (Model.Rows.Count == 0)
+    {
+        <partial name="_EmptyState" model='new EmptyStateModel("car", "Aún no registraste vehículos", "Registra tu primer vehículo y publícalo en pocos pasos.", "Registrar vehículo", "/panel/publish")' />
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="ml-table">
+                <caption class="visually-hidden">Mis vehículos</caption>
+                <thead><tr><th>Vehículo</th><th>Placa</th><th>Kilometraje</th><th>Publicación</th><th>Registrado</th><th><span class="visually-hidden">Acciones</span></th></tr></thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    var v = row.Vehicle;
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img class="thumb" src="@Ui.Img(v.Images.FirstOrDefault(i => i.IsCover)?.Url ?? v.Images.FirstOrDefault()?.Url)" alt="" width="64" height="48" loading="lazy" />
+                                <div><div class="fw-semibold">@v.BrandName @v.ModelName @v.ModelYear</div><div class="small text-muted">@v.VehicleTypeName · @Ui.Condition(v.Condition) · @v.Images.Count foto@(v.Images.Count == 1 ? "" : "s")</div></div>
+                            </div>
+                        </td>
+                        <td class="tabular">@(v.Plate ?? "Sin placa")</td>
+                        <td class="tabular">@Ui.Number(v.Mileage) km</td>
+                        <td>
+                            @if (row.Listing is { } l) { <span class="ml-badge ml-badge--@Ui.Tone(l.Status)">@Ui.ListingStatus(l.Status)</span> }
+                            else { <span class="ml-badge">Sin publicación</span> }
+                        </td>
+                        <td class="text-muted">@Ui.Date(v.CreatedAt)</td>
+                        <td>
+                            <div class="table-actions">
+                                <a class="btn btn-sm btn-light" href="/panel/vehicles/details/@v.Id">Ver</a>
+                                <a class="btn btn-sm btn-light" href="/panel/publish/@v.Id">@(row.Listing is null ? "Publicar" : "Editar")</a>
+                                <form asp-action="Delete" asp-route-id="@v.Id" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" data-confirm="Se eliminará el vehículo @v.BrandName @v.ModelName y sus datos. Esta acción no se puede deshacer." data-confirm-title="Eliminar vehículo" data-confirm-ok="Eliminar" data-confirm-variant="danger">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-foot"><span>@Model.Page.TotalCount vehículo@(Model.Page.TotalCount == 1 ? "" : "s")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page.Page, totalPages = Model.Page.TotalPages })</div>
+    }
+</section>

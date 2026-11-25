@@ -1,0 +1,65 @@
+@model AdminHomeViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Dashboard";
+    var s = Model.Stats;
+    string Json(object o) => JsonSerializer.Serialize(o);
+    var totalListings = s.ListingsByCategory.Sum(c => c.Listings);
+}
+<div class="page-title"><div><h2>Panel de administración</h2><p>Indicadores generales de la plataforma.</p></div>
+    @if (Model.PendingModeration > 0) { <a class="btn btn-primary" href="/admin/listings"><i data-lucide="shield-check"></i>@Model.PendingModeration publicación@(Model.PendingModeration == 1 ? "" : "es") por revisar</a> }
+</div>
+
+<div class="row g-3 mb-4">
+    @{
+        var kpis = new (string L, string V, string I, string H)[]
+        {
+            ("Usuarios registrados", Ui.Number(s.UsersRegistered), "users", "Total de cuentas"),
+            ("Usuarios activos", Ui.Number(s.UsersActive), "user-check", "Cuentas no bloqueadas"),
+            ("Suscriptores de pago", Ui.Number(s.PayingSubscribers), "badge-check", "Planes de pago vigentes"),
+            ("Publicaciones visibles", Ui.Number(totalListings), "megaphone", "Publicadas, reservadas o alquiladas"),
+            ("Vehículos vendidos", Ui.Number(s.VehiclesSold), "check-circle-2", "Acumulado"),
+            ("Vehículos alquilados", Ui.Number(s.VehiclesRented), "key-round", "Acumulado")
+        };
+    }
+    @foreach (var k in kpis)
+    {
+        <div class="col-6 col-xl-4"><div class="stat"><span class="stat__icon"><i data-lucide="@k.I"></i></span><div><div class="stat__label">@k.L</div><div class="stat__value">@k.V</div><div class="stat__hint">@k.H</div></div></div></div>
+    }
+</div>
+
+<section class="ml-card mb-4" aria-labelledby="mrr-title">
+    <div class="ml-card__head"><h3 id="mrr-title">Ingreso mensual recurrente (MRR)</h3><span class="text-muted small">Los tres orígenes se muestran por separado y nunca se suman</span></div>
+    <div class="ml-card__body">
+        <div class="row g-3">
+            <div class="col-md-4"><div class="price-row"><div><div class="price-row__label">MRR real</div><div class="small text-muted">Pagos con proveedor real</div></div><span class="price">@Ui.Money("PEN", s.MrrReal)</span></div></div>
+            <div class="col-md-4"><div class="price-row"><div><div class="price-row__label">MRR simulado <span class="ml-badge ml-badge--demo">Demo</span></div><div class="small text-muted">Pagos de demostración, no es dinero</div></div><span class="price">@Ui.Money("PEN", s.MrrSimulated)</span></div></div>
+            <div class="col-md-4"><div class="price-row"><div><div class="price-row__label">Planes otorgados</div><div class="small text-muted">Activados por administración sin pago</div></div><span class="price">@Ui.Money("PEN", s.ComplimentaryValue)</span></div></div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <section class="ml-card h-100"><div class="ml-card__head"><h3>Crecimiento mensual</h3></div>
+            <div class="ml-card__body"><div class="chart-box"><canvas data-label="Nuevos usuarios y publicaciones por mes"
+                data-chart="@Json(new { type = "line", labels = s.MonthlyGrowth.Select(m => m.Month), datasets = new object[] { new { label = "Nuevos usuarios", data = s.MonthlyGrowth.Select(m => m.NewUsers) }, new { label = "Nuevas publicaciones", data = s.MonthlyGrowth.Select(m => m.NewListings) } } })"></canvas></div></div></section>
+    </div>
+    <div class="col-lg-5">
+        <section class="ml-card h-100"><div class="ml-card__head"><h3>Distribución por planes</h3></div>
+            <div class="ml-card__body">
+                @if (s.PlanDistribution.Count == 0) { <partial name="_EmptyState" model='new EmptyStateModel("layers", "Sin suscripciones activas", "Aún no hay usuarios con un plan vigente.")' /> }
+                else { <div class="chart-box"><canvas data-label="Suscriptores activos por plan" data-chart="@Json(new { type = "doughnut", labels = s.PlanDistribution.Select(p => p.PlanName), datasets = new object[] { new { data = s.PlanDistribution.Select(p => p.ActiveSubscribers) } } })"></canvas></div> }
+            </div></section>
+    </div>
+</div>
+
+<section class="ml-card">
+    <div class="ml-card__head"><h3>Publicaciones por categoría</h3></div>
+    <div class="ml-card__body">
+        @if (s.ListingsByCategory.Count == 0) { <partial name="_EmptyState" model='new EmptyStateModel("car", "Sin publicaciones visibles", "Cuando se aprueben publicaciones verás aquí su distribución por tipo de vehículo.")' /> }
+        else { <div class="chart-box chart-box--sm"><canvas data-label="Publicaciones visibles por tipo de vehículo" data-chart="@Json(new { type = "bar", legend = false, labels = s.ListingsByCategory.Select(c => c.Category), datasets = new object[] { new { label = "Publicaciones", data = s.ListingsByCategory.Select(c => c.Listings) } } })"></canvas></div> }
+    </div>
+</section>
+
+@section Scripts { <script src="~/lib/chartjs/chart.umd.min.js"></script> }

@@ -1,0 +1,41 @@
+@model PlanInfo
+@{
+    var recommended = Model.Code == "PROFESSIONAL";
+    var current = ViewData["CurrentCode"] as string;
+    var isCurrent = current == Model.Code;
+    var authed = User.Identity?.IsAuthenticated == true;
+    string Plural(int n, string one, string many) => n == 1 ? $"{n} {one}" : $"{n} {many}";
+}
+<div class="plan-card @(recommended ? "plan-card--featured" : "") @(isCurrent ? "plan-card--current" : "")">
+    @if (recommended) { <span class="plan-card__flag ml-badge ml-badge--dark">Recomendado</span> }
+    <h3 class="plan-card__name">@Model.Name</h3>
+    <p class="plan-card__price">@(Model.MonthlyPrice == 0 ? "S/ 0" : Ui.Money("PEN", Model.MonthlyPrice)) <small>@(Model.MonthlyPrice == 0 ? "para siempre" : "al mes")</small></p>
+    <ul class="plan-card__list">
+        <li><i data-lucide="check" class="icon--sm"></i>@Plural(Model.MaxActiveListings, "publicación activa", "publicaciones activas")</li>
+        <li><i data-lucide="check" class="icon--sm"></i>@Plural(Model.MaxPhotosPerVehicle, "fotografía por vehículo", "fotografías por vehículo")</li>
+        @if (Model.MaxFeaturedListings > 0) { <li><i data-lucide="check" class="icon--sm"></i>@Plural(Model.MaxFeaturedListings, "publicación destacada", "publicaciones destacadas")</li> }
+        else { <li class="off"><i data-lucide="minus" class="icon--sm"></i>Sin destacados</li> }
+        <li><i data-lucide="check" class="icon--sm"></i>Estadísticas @(Model.HasAdvancedStats ? "avanzadas" : "básicas")</li>
+        @if (ViewData["Compact"] is not true)
+        {
+            <li class="@(Model.HasBusinessProfile ? "" : "off")"><i data-lucide="@(Model.HasBusinessProfile ? "check" : "minus")" class="icon--sm"></i>Perfil empresarial</li>
+            <li class="@(Model.CanExportReports ? "" : "off")"><i data-lucide="@(Model.CanExportReports ? "check" : "minus")" class="icon--sm"></i>Exportación de reportes</li>
+            <li class="@(Model.HasPrioritySupport ? "" : "off")"><i data-lucide="@(Model.HasPrioritySupport ? "check" : "minus")" class="icon--sm"></i>Soporte prioritario</li>
+        }
+    </ul>
+    @if (isCurrent)
+    {
+        <button type="button" class="btn btn-light w-100" disabled>Tu plan actual</button>
+    }
+    else if (!authed)
+    {
+        <a class="btn @(recommended ? "btn-primary" : "btn-outline-primary") w-100" href="@(Model.MonthlyPrice == 0 ? "/registro" : "/registro?returnUrl=%2Fplanes")">@(Model.MonthlyPrice == 0 ? "Empezar gratis" : "Elegir plan")</a>
+    }
+    else
+    {
+        <form asp-area="Dashboard" asp-controller="Subscription" asp-action="Select" method="post">
+            <input type="hidden" name="planCode" value="@Model.Code" />
+            <button type="submit" class="btn @(recommended ? "btn-primary" : "btn-outline-primary") w-100">@(Model.MonthlyPrice == 0 ? "Cambiar a Gratis" : "Elegir plan")</button>
+        </form>
+    }
+</div>

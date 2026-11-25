@@ -1,0 +1,85 @@
+/* ==========================================================================
+   MotorLink · Design tokens
+   ÚNICO lugar donde se definen colores, tipografía, espaciados, radios y sombras.
+   Cualquier componente debe usar estas variables, nunca valores literales.
+   ========================================================================== */
+:root {
+    /* Marca */
+    --ml-navy: #0F172A;
+    --ml-navy-soft: #1E293B;
+    --ml-blue: #2563EB;
+    --ml-blue-dark: #1D4ED8;
+    --ml-blue-soft: #EFF6FF;
+    --ml-white: #FFFFFF;
+    --ml-bg: #F8FAFC;
+    --ml-surface: #FFFFFF;
+    --ml-border: #E2E8F0;
+    --ml-border-strong: #CBD5E1;
+
+    /* Texto */
+    --ml-text: #0F172A;
+    --ml-text-muted: #64748B;
+    --ml-text-on-dark: #E2E8F0;
+
+    /* Estados */
+    --ml-success: #15803D;
+    --ml-success-soft: #DCFCE7;
+    --ml-danger: #DC2626;
+    --ml-danger-soft: #FEE2E2;
+    --ml-warning: #B45309;
+    --ml-warning-soft: #FEF3C7;
+    --ml-info-soft: var(--ml-blue-soft);
+
+    /* Tipografía */
+    --ml-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --ml-fs-xs: .75rem;
+    --ml-fs-sm: .875rem;
+    --ml-fs-base: 1rem;
+    --ml-fs-lg: 1.125rem;
+    --ml-fs-xl: 1.375rem;
+    --ml-fs-2xl: 1.75rem;
+    --ml-fs-3xl: 2.25rem;
+    --ml-fs-hero: clamp(2rem, 4.5vw, 3.25rem);
+    --ml-lh: 1.55;
+
+    /* Espaciado */
+    --ml-space-1: .25rem;
+    --ml-space-2: .5rem;
+    --ml-space-3: .75rem;
+    --ml-space-4: 1rem;
+    --ml-space-5: 1.5rem;
+    --ml-space-6: 2rem;
+    --ml-space-7: 3rem;
+    --ml-space-8: 4.5rem;
+
+    /* Forma */
+    --ml-radius-sm: 6px;
+    --ml-radius: 10px;
+    --ml-radius-lg: 14px;
+    --ml-radius-pill: 999px;
+    --ml-shadow-sm: 0 1px 2px rgba(15, 23, 42, .06);
+    --ml-shadow: 0 4px 14px rgba(15, 23, 42, .08);
+    --ml-shadow-lg: 0 12px 32px rgba(15, 23, 42, .14);
+    --ml-focus: 0 0 0 3px rgba(37, 99, 235, .35);
+    --ml-transition: .15s ease;
+
+    /* Layout */
+    --ml-container: 1200px;
+    --ml-sidebar-w: 264px;
+    --ml-header-h: 68px;
+    --ml-card-img-ratio: 4 / 3;
+
+    /* Puente con Bootstrap 5 */
+    --bs-body-font-family: var(--ml-font);
+    --bs-body-color: var(--ml-text);
+    --bs-body-bg: var(--ml-bg);
+    --bs-primary: var(--ml-blue);
+    --bs-primary-rgb: 37, 99, 235;
+    --bs-link-color: var(--ml-blue);
+    --bs-link-hover-color: var(--ml-blue-dark);
+    --bs-border-color: var(--ml-border);
+    --bs-border-radius: var(--ml-radius);
+    --bs-secondary-color: var(--ml-text-muted);
+    --bs-success: var(--ml-success);
+    --bs-danger: var(--ml-danger);
+}

@@ -1,0 +1,14 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Acceso denegado";
+}
+<div class="empty px-0 text-start">
+    <div class="empty__icon mx-0"><i data-lucide="shield-alert"></i></div>
+    <h1>Acceso denegado</h1>
+    <p class="mx-0">Tu cuenta no tiene permisos para ver esta sección. Si crees que es un error, inicia sesión con otra cuenta.</p>
+    <div class="cluster">
+        <a class="btn btn-primary" href="/">Ir al inicio</a>
+        @if (User.Identity?.IsAuthenticated == true) { <a class="btn btn-light" href="/panel">Ir a mi panel</a> }
+        else { <a class="btn btn-light" href="/ingresar">Iniciar sesión</a> }
+    </div>
+</div>

@@ -1,0 +1,9 @@
+@model int
+@{
+    var code = Model == 0 ? 500 : Model;
+    ViewData["Title"] = code == 404 ? "Página no encontrada" : "Ocurrió un problema";
+    var empty = code == 404
+        ? new EmptyStateModel("search-x", "No encontramos esta página", "El enlace puede estar roto o la publicación ya no está disponible.", "Volver al inicio", "/")
+        : new EmptyStateModel("triangle-alert", "Algo salió mal", "Tuvimos un problema al procesar tu solicitud. Inténtalo nuevamente en unos minutos.", "Volver al inicio", "/");
+}
+<section class="ml-section"><div class="ml-container"><partial name="_EmptyState" model="empty" /></div></section>

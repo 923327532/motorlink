@@ -1,0 +1,104 @@
+@model CatalogViewModel
+@{
+    var tabs = new (string K, string L)[] { ("brands", "Marcas"), ("models", "Modelos"), ("types", "Tipos de vehículo") };
+    var typeNames = Model.Types.ToDictionary(t => t.Id, t => t.Name);
+    var brandNames = Model.Brands.ToDictionary(b => b.Id, b => b.Name);
+    var kind = Model.Tab switch { "models" => "models", "types" => "vehicle-types", _ => "brands" };
+}
+<div class="page-title">
+    <div><h2>Marcas y modelos</h2><p>Los modelos dependen de una marca y son compatibles con uno o varios tipos de vehículo. Lo que tiene registros asociados solo puede desactivarse.</p></div>
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#cat-modal-@Model.Tab" data-fill='{"id":"","name":"","code":"","brandId":"","vehicleTypeIds":[]}'><i data-lucide="plus"></i>@(Model.Tab == "brands" ? "Nueva marca" : Model.Tab == "models" ? "Nuevo modelo" : "Nuevo tipo")</button>
+</div>
+<nav class="nav-tabs-ml" aria-label="Catálogo">@foreach (var t in tabs) { <a href="/admin/catalog?tab=@t.K" class="@(Model.Tab == t.K ? "is-active" : "")">@t.L</a> }</nav>
+
+<section class="ml-card">
+    @if (Model.Tab != "types")
+    {
+        <form class="table-toolbar" method="get" role="search" data-no-loading>
+            <input type="hidden" name="tab" value="@Model.Tab" />
+            <div class="d-flex flex-wrap gap-2 flex-grow-1">
+                <input class="form-control w-auto flex-grow-1" type="search" name="search" value="@Model.Search" placeholder="Buscar por nombre" aria-label="Buscar" />
+                @if (Model.Tab == "models")
+                {
+                    <select class="form-select w-auto" name="brandId" aria-label="Filtrar por marca" data-autosubmit><option value="">Todas las marcas</option>@foreach (var b in Model.Brands) { <option value="@b.Id" selected="@(Model.BrandId == b.Id)">@b.Name</option> }</select>
+                }
+            </div>
+            <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>Buscar</button>
+        </form>
+    }
+
+    @if (Model.Tab == "brands")
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Marcas</caption>
+            <thead><tr><th>Marca</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var b in Model.Brands)
+            {
+                <tr><td class="fw-semibold">@b.Name</td><td><span class="ml-badge @(b.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(b.IsActive ? "Activa" : "Inactiva")</span></td>
+                    <td><div class="table-actions">
+                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#cat-modal-brands" data-fill='@Json.Serialize(new { id = b.Id, name = b.Name })'>Editar</button>
+                        @await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, b.Id, b.IsActive, Model.Tab, b.Name))
+                    </div></td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+    else if (Model.Tab == "models")
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Modelos</caption>
+            <thead><tr><th>Modelo</th><th>Marca</th><th>Tipos compatibles</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var m in Model.Models)
+            {
+                <tr><td class="fw-semibold">@m.Name</td><td>@brandNames.GetValueOrDefault(m.BrandId, "—")</td>
+                    <td>@foreach (var tid in m.VehicleTypeIds) { <span class="ml-badge me-1">@typeNames.GetValueOrDefault(tid, "?")</span> }</td>
+                    <td><span class="ml-badge @(m.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(m.IsActive ? "Activo" : "Inactivo")</span></td>
+                    <td><div class="table-actions">
+                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#cat-modal-models" data-fill='@Json.Serialize(new { id = m.Id, name = m.Name, brandId = m.BrandId, vehicleTypeIds = m.VehicleTypeIds })'>Editar</button>
+                        @await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, m.Id, m.IsActive, Model.Tab, m.Name))
+                    </div></td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+    else
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <caption class="visually-hidden">Tipos de vehículo</caption>
+            <thead><tr><th>Tipo</th><th>Código</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var t in Model.Types)
+            {
+                <tr><td class="fw-semibold">@t.Name</td><td class="tabular">@t.Code</td><td><span class="ml-badge @(t.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(t.IsActive ? "Activo" : "Inactivo")</span></td>
+                    <td><div class="table-actions">
+                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#cat-modal-types" data-fill='@Json.Serialize(new { id = t.Id, name = t.Name, code = t.Code })'>Editar</button>
+                        @await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, t.Id, t.IsActive, Model.Tab, t.Name))
+                    </div></td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+</section>
+
+@* ---- Modal de creación/edición (uno por pestaña) ---- *@
+<div class="modal fade" id="cat-modal-@Model.Tab" tabindex="-1" aria-labelledby="cat-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" asp-action="Save" method="post">
+            <div class="modal-header"><h2 class="modal-title" id="cat-title">@(Model.Tab == "brands" ? "Marca" : Model.Tab == "models" ? "Modelo" : "Tipo de vehículo")</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body stack">
+                <input type="hidden" name="kind" value="@kind" /><input type="hidden" name="tab" value="@Model.Tab" /><input type="hidden" name="id" />
+                @if (Model.Tab == "types") { <div><label class="form-label" for="cat-code">Código *</label><input id="cat-code" name="code" class="form-control text-uppercase" required maxlength="30" pattern="[A-Z][A-Z0-9_]{1,29}" /><div class="form-text">MAYÚSCULAS, números y guion bajo (p. ej. MINIVAN).</div></div> }
+                @if (Model.Tab == "models") { <div><label class="form-label" for="cat-brand">Marca *</label><select id="cat-brand" name="brandId" class="form-select" required><option value="">Selecciona</option>@foreach (var b in Model.Brands) { <option value="@b.Id">@b.Name</option> }</select></div> }
+                <div><label class="form-label" for="cat-name">Nombre *</label><input id="cat-name" name="name" class="form-control" required maxlength="80" /></div>
+                @if (Model.Tab == "models")
+                {
+                    <fieldset><legend class="form-label">Tipos de vehículo compatibles *</legend>
+                        <div class="row g-2">@foreach (var t in Model.Types) { <div class="col-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="cat-t-@t.Id" name="vehicleTypeIds" value="@t.Id" /><label class="form-check-label" for="cat-t-@t.Id">@t.Name</label></div></div> }</div></fieldset>
+                }
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+        </form>
+    </div>
+</div>

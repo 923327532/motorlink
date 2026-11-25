@@ -1,0 +1,62 @@
+/* ==========================================================================
+   MotorLink · Base (tipografía, reset ligero, utilidades, accesibilidad)
+   ========================================================================== */
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }
+
+html { scroll-behavior: smooth; }
+body {
+    font-family: var(--ml-font);
+    font-size: var(--ml-fs-base);
+    line-height: var(--ml-lh);
+    color: var(--ml-text);
+    background: var(--ml-bg);
+    -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -.01em; color: var(--ml-navy); }
+h1 { font-size: var(--ml-fs-2xl); }
+h2 { font-size: var(--ml-fs-xl); }
+h3 { font-size: var(--ml-fs-lg); }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; }
+.text-muted, .text-secondary { color: var(--ml-text-muted) !important; }
+.small, small { font-size: var(--ml-fs-sm); }
+
+/* Accesibilidad: foco visible solo con teclado */
+:focus { outline: none; }
+:focus-visible { outline: none; box-shadow: var(--ml-focus); border-radius: var(--ml-radius-sm); }
+.skip-link { position: absolute; left: var(--ml-space-3); top: -4rem; z-index: 3000; background: var(--ml-navy); color: var(--ml-white); padding: var(--ml-space-2) var(--ml-space-4); border-radius: var(--ml-radius-sm); }
+.skip-link:focus { top: var(--ml-space-3); color: var(--ml-white); }
+
+/* Contenedor y secciones */
+.ml-container { width: 100%; max-width: var(--ml-container); margin-inline: auto; padding-inline: var(--ml-space-4); }
+.ml-section { padding-block: var(--ml-space-7); }
+.ml-section--tight { padding-block: var(--ml-space-6); }
+.ml-section--white { background: var(--ml-white); }
+.ml-section--dark { background: var(--ml-navy); color: var(--ml-text-on-dark); }
+.ml-section--dark h2, .ml-section--dark h3 { color: var(--ml-white); }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--ml-space-4); margin-bottom: var(--ml-space-5); }
+.section-head h2 { margin: 0; font-size: var(--ml-fs-2xl); }
+.section-head p { margin: var(--ml-space-1) 0 0; color: var(--ml-text-muted); }
+.eyebrow { display: inline-block; font-size: var(--ml-fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ml-blue); }
+
+/* Iconos Lucide */
+.icon { width: 1.125rem; height: 1.125rem; stroke-width: 2; flex: none; vertical-align: -.2em; }
+.icon--lg { width: 1.5rem; height: 1.5rem; }
+.icon--sm { width: .95rem; height: .95rem; }
+svg.lucide { width: 1.125rem; height: 1.125rem; }
+
+/* Utilidades */
+.stack > * + * { margin-top: var(--ml-space-4); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--ml-space-3); align-items: center; }
+.tabular { font-variant-numeric: tabular-nums; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.divider { border: 0; border-top: 1px solid var(--ml-border); margin-block: var(--ml-space-5); }
+.hidden { display: none !important; }
+[hidden] { display: none !important; }
+.pre-line { white-space: pre-line; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.nowrap { white-space: nowrap; }

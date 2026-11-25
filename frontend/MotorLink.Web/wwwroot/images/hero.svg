@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" preserveAspectRatio="xMaxYMid slice" role="img" aria-label="Ilustración de un SUV en una avenida">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1B3F"/><stop offset=".6" stop-color="#1D3A7A"/><stop offset="1" stop-color="#3B6FD6"/></linearGradient>
+<linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8FAFC"/><stop offset="1" stop-color="#CBD5E1"/></linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#0F172A"/></linearGradient>
+<linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E293B"/><stop offset="1" stop-color="#0F172A"/></linearGradient>
+</defs>
+<rect width="1600" height="720" fill="url(#sky)"/>
+<circle cx="1180" cy="190" r="86" fill="#DBEAFE" opacity=".85"/>
+<g fill="#0F2A5E" opacity=".85"><rect x="720" y="300" width="90" height="270"/><rect x="820" y="230" width="120" height="340"/><rect x="950" y="340" width="80" height="230"/><rect x="1040" y="260" width="110" height="310"/><rect x="1160" y="320" width="95" height="250"/><rect x="1265" y="210" width="130" height="360"/><rect x="1405" y="300" width="100" height="270"/><rect x="1515" y="350" width="90" height="220"/></g>
+<g fill="#93C5FD" opacity=".55"><rect x="836" y="260" width="10" height="14"/><rect x="866" y="260" width="10" height="14"/><rect x="896" y="300" width="10" height="14"/><rect x="1058" y="290" width="10" height="14"/><rect x="1088" y="330" width="10" height="14"/><rect x="1282" y="250" width="10" height="14"/><rect x="1312" y="290" width="10" height="14"/><rect x="1342" y="250" width="10" height="14"/><rect x="1420" y="340" width="10" height="14"/></g>
+<rect y="540" width="1600" height="180" fill="url(#road)"/>
+<rect y="536" width="1600" height="6" fill="#334155"/>
+<g fill="#475569"><rect x="640" y="640" width="150" height="8" rx="4"/><rect x="900" y="640" width="150" height="8" rx="4"/><rect x="1160" y="640" width="150" height="8" rx="4"/><rect x="1420" y="640" width="150" height="8" rx="4"/></g>
+<ellipse cx="1130" cy="602" rx="330" ry="22" fill="#020617" opacity=".5"/>
+<g transform="translate(830 330) scale(1.05)">
+<path d="M40 232V176q0-30 34-38l118-26 66-84q16-20 44-20h188q36 0 62 26l78 78 112 22q32 8 32 40v58z" fill="url(#body)"/>
+<path d="M258 108l54-70q10-12 30-12h180q26 0 44 18l62 64z" fill="url(#glass)"/>
+<path d="M420 26v96" stroke="#CBD5E1" stroke-width="6"/>
+<rect x="40" y="206" width="640" height="26" fill="#94A3B8" opacity=".55"/>
+<rect x="604" y="150" width="70" height="20" rx="8" fill="#FDE68A"/>
+<rect x="40" y="154" width="42" height="18" rx="8" fill="#F87171"/>
+<path d="M300 186h60" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+<g><circle cx="190" cy="240" r="58" fill="#0F172A"/><circle cx="190" cy="240" r="34" fill="#CBD5E1"/><circle cx="190" cy="240" r="12" fill="#475569"/></g>
+<g><circle cx="570" cy="240" r="58" fill="#0F172A"/><circle cx="570" cy="240" r="34" fill="#CBD5E1"/><circle cx="570" cy="240" r="12" fill="#475569"/></g>
+</g>
+</svg>

@@ -1,0 +1,36 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+*.log
+publish/
+
+## Editores
+.idea/
+.vscode/
+
+## Secretos y configuración local (nunca al repositorio)
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+secrets.json
+*.pfx
+*.key
+*.pem
+client_secret*.json
+
+## Datos de ejecución (sesiones, claves de Data Protection, fotos locales)
+**/data/
+**/App_Data/
+
+## Node / pruebas E2E
+node_modules/
+frontend/e2e/shots/
+
+## SO
+.DS_Store
+Thumbs.db

@@ -1,0 +1,46 @@
+@model NegotiationsViewModel
+@{
+    var received = Model.Role == "RECEIVED";
+    var action = received ? "received" : "sent";
+    var me = User.UserId();
+    var statuses = new (string? K, string L)[] { (null, "Todas"), ("PENDING", "Pendientes"), ("COUNTER_OFFER", "Contrapropuestas"), ("ACCEPTED", "Acuerdos"), ("REJECTED", "Rechazadas"), ("CANCELLED", "Canceladas"), ("EXPIRED", "Vencidas") };
+}
+<div class="page-title">
+    <div><h2>@(received ? "Propuestas recibidas" : "Propuestas enviadas")</h2><p>@(received ? "Ofertas que otras personas hicieron por tus publicaciones." : "Ofertas que enviaste a otros propietarios.")</p></div>
+    <a class="btn btn-light" href="/panel/negotiations/@(received ? "sent" : "received")">Ver @(received ? "enviadas" : "recibidas")</a>
+</div>
+<nav class="nav-tabs-ml" aria-label="Filtrar por estado">
+    @foreach (var s in statuses) { <a href="/panel/negotiations/@action@(s.K is null ? "" : "?status=" + s.K)" class="@(Model.Status == s.K ? "is-active" : "")">@s.L</a> }
+</nav>
+<section class="ml-card">
+    @if (Model.Page.Items.Count == 0)
+    {
+        <partial name="_EmptyState" model='new EmptyStateModel("handshake", "No hay propuestas por aquí", received ? "Cuando alguien envíe una propuesta por tus vehículos aparecerá en esta lista." : "Envía una propuesta desde el detalle de cualquier vehículo disponible.", received ? null : "Explorar vehículos", received ? null : "/vehiculos")' />
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="ml-table">
+                <caption class="visually-hidden">Lista de negociaciones</caption>
+                <thead><tr><th>Publicación</th><th>@(received ? "Interesado" : "Propietario")</th><th>Modalidad</th><th class="num">Última oferta</th><th>Estado</th><th>Vence</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var n in Model.Page.Items)
+                {
+                    var open = n.Status is "PENDING" or "COUNTER_OFFER";
+                    var myTurn = open && n.LastOfferById != me;
+                    <tr>
+                        <td class="fw-semibold">@n.ListingTitle</td>
+                        <td>@(received ? n.BuyerName : n.SellerName)</td>
+                        <td>@Ui.Operation(n.OperationType)</td>
+                        <td class="num">@Ui.Money(n.Currency, n.LastAmount) <small class="text-muted">@Ui.Period(n.Periodicity)</small></td>
+                        <td><span class="ml-badge ml-badge--@Ui.Tone(n.Status)">@Ui.NegotiationStatus(n.Status)</span>@if (myTurn) { <span class="ml-badge ml-badge--info ms-1">Tu turno</span> }</td>
+                        <td class="text-muted">@(open ? Ui.Date(n.ExpiresAt) : "—")</td>
+                        <td class="num"><a class="btn btn-sm @(myTurn ? "btn-primary" : "btn-light")" href="/panel/negotiations/details/@n.Id">@(myTurn ? "Responder" : "Ver")</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-foot"><span>@Model.Page.TotalCount negociación@(Model.Page.TotalCount == 1 ? "" : "es")</span>@await Component.InvokeAsync("Pagination", new { page = Model.Page.Page, totalPages = Model.Page.TotalPages })</div>
+    }
+</section>

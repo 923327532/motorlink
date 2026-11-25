@@ -1,0 +1,10 @@
+@model CatalogRowActions
+@* Activar/desactivar y eliminar (el backend impide eliminar lo que tiene registros asociados). *@
+<form asp-action="SetActive" method="post" data-no-loading>
+    <input type="hidden" name="kind" value="@Model.Kind" /><input type="hidden" name="id" value="@Model.Id" /><input type="hidden" name="active" value="@((!Model.IsActive).ToString().ToLowerInvariant())" /><input type="hidden" name="tab" value="@Model.Tab" />
+    <button type="submit" class="btn btn-sm btn-light">@(Model.IsActive ? "Desactivar" : "Activar")</button>
+</form>
+<form asp-action="Delete" method="post" data-no-loading>
+    <input type="hidden" name="kind" value="@Model.Kind" /><input type="hidden" name="id" value="@Model.Id" /><input type="hidden" name="tab" value="@Model.Tab" />
+    <button type="submit" class="btn btn-sm btn-outline-danger" data-confirm="Se eliminará «@Model.Name». Si tiene registros asociados no se podrá eliminar; en ese caso desactívalo." data-confirm-title="Eliminar" data-confirm-ok="Eliminar" data-confirm-variant="danger">Eliminar</button>
+</form>

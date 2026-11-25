@@ -1,0 +1,149 @@
+@model DashboardHomeViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Resumen";
+    var d = Model.Data;
+    var plan = Model.Plan;
+    string Json(object o) => JsonSerializer.Serialize(o);
+
+    // Publicaciones por estado (datos reales de "Mis publicaciones")
+    var byStatus = Model.Listings.GroupBy(l => l.Status).Select(g => (Label: Ui.ListingStatus(g.Key), Count: g.Count())).OrderByDescending(x => x.Count).ToList();
+    var funnel = new[] { d.Views, d.ContactClicks, d.ProposalsReceived, d.AcceptedNegotiations };
+    var hasActivity = d.Views + d.ContactClicks + d.ProposalsReceived + d.ProposalsSent + d.AcceptedNegotiations > 0;
+    var used = plan.Usage.ActiveListings; var max = Math.Max(plan.Usage.MaxActiveListings, 1);
+}
+
+<div class="page-title">
+    <div><h2>Hola, @(User.Identity?.Name?.Split(' ')[0])</h2><p>Así van tus publicaciones del @Ui.Date(Model.From) al @Ui.Date(Model.To).</p></div>
+    <form method="get" class="d-flex flex-wrap align-items-end gap-2" data-no-loading>
+        <div><label class="form-label small mb-1" for="from">Desde</label><input id="from" name="from" type="date" class="form-control form-control-sm" value="@Model.From.ToString("yyyy-MM-dd")" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")" /></div>
+        <div><label class="form-label small mb-1" for="to">Hasta</label><input id="to" name="to" type="date" class="form-control form-control-sm" value="@Model.To.ToString("yyyy-MM-dd")" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")" /></div>
+        <button class="btn btn-primary btn-sm" type="submit">Aplicar</button>
+        <a class="btn btn-light btn-sm" href="/panel">Últimos 30 días</a>
+        <a class="btn btn-light btn-sm" href="/panel/home/export?from=@Model.From.ToString("yyyy-MM-dd")&to=@Model.To.ToString("yyyy-MM-dd")" title="Disponible en planes con exportación de reportes"><i data-lucide="download"></i>Exportar CSV</a>
+    </form>
+</div>
+
+<div class="row g-3 mb-4">
+    @{
+        var kpis = new (string Label, string Value, string Icon, string Hint)[]
+        {
+            ("Publicaciones activas", $"{d.ActiveListings}", "megaphone", $"{used} de {plan.Usage.MaxActiveListings} del plan"),
+            ("Visualizaciones", Ui.Number(d.Views), "eye", "En el período"),
+            ("Contactos", Ui.Number(d.ContactClicks), "message-circle", "Clics en WhatsApp o teléfono"),
+            ("Propuestas", $"{d.ProposalsReceived} / {d.ProposalsSent}", "hand-coins", "Recibidas / enviadas"),
+            ("Acuerdos de precio", Ui.Number(d.AcceptedNegotiations), "handshake", "Propuestas aceptadas"),
+            ("Vehículos vendidos", Ui.Number(d.VehiclesSold), "badge-check", "Marcados como vendidos"),
+            ("Vehículos alquilados", Ui.Number(d.VehiclesRented), "key-round", "Marcados como alquilados"),
+            ("Tasa de conversión", Ui.Percent(d.ConversionRate), "trending-up", "Aceptadas ÷ recibidas")
+        };
+    }
+    @foreach (var k in kpis)
+    {
+        <div class="col-6 col-xl-3">
+            <div class="stat"><span class="stat__icon"><i data-lucide="@k.Icon"></i></span><div><div class="stat__label">@k.Label</div><div class="stat__value">@k.Value</div><div class="stat__hint">@k.Hint</div></div></div>
+        </div>
+    }
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Evolución mensual</h3>@if (!d.AdvancedStats) { <span class="ml-badge">Estadísticas avanzadas</span> }</div>
+            <div class="ml-card__body">
+                @if (d.AdvancedStats && d.MonthlyEvolution is { Count: > 0 } m)
+                {
+                    <div class="chart-box"><canvas data-label="Evolución mensual de visualizaciones, contactos y propuestas"
+                        data-chart="@Json(new { type = "line", labels = m.Select(x => x.Month), datasets = new object[] {
+                            new { label = "Visualizaciones", data = m.Select(x => x.Views) }, new { label = "Contactos", data = m.Select(x => x.ContactClicks) }, new { label = "Propuestas recibidas", data = m.Select(x => x.ProposalsReceived) } } })"></canvas></div>
+                }
+                else if (!d.AdvancedStats)
+                {
+                    <partial name="_EmptyState" model='new EmptyStateModel("chart-line", "Evolución mensual disponible en planes superiores", "Tu plan incluye estadísticas básicas. Con el plan Profesional o superior ves la evolución mes a mes.", "Ver planes", "/planes")' />
+                }
+                else
+                {
+                    <partial name="_EmptyState" model='new EmptyStateModel("chart-line", "Sin datos en este período", "Cuando tus publicaciones reciban visitas y propuestas verás aquí su evolución.")' />
+                }
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-4">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Mi plan</h3><span class="ml-badge ml-badge--info">@plan.Plan.Name</span></div>
+            <div class="ml-card__body stack">
+                <div>
+                    <div class="d-flex justify-content-between small"><span>Publicaciones activas</span><strong>@used / @plan.Usage.MaxActiveListings</strong></div>
+                    <progress class="ml-progress @(used >= max ? "is-full" : "")" value="@used" max="@max" aria-label="Publicaciones usadas"></progress>
+                </div>
+                <div class="d-flex justify-content-between small"><span>Destacadas</span><strong>@plan.Usage.FeaturedListings / @plan.Usage.MaxFeaturedListings</strong></div>
+                <div class="d-flex justify-content-between small"><span>Fotografías por vehículo</span><strong>@plan.Usage.MaxPhotosPerVehicle</strong></div>
+                <div class="d-flex justify-content-between small"><span>Vence</span><strong>@(plan.Subscription.EndsAt is null ? "Sin vencimiento" : Ui.Date(plan.Subscription.EndsAt))</strong></div>
+                <a class="btn btn-light w-100" href="/panel/subscription">Gestionar suscripción</a>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Embudo comercial</h3></div>
+            <div class="ml-card__body">
+                @if (hasActivity)
+                {
+                    <div class="chart-box chart-box--sm"><canvas data-label="Visualizaciones, contactos, propuestas y acuerdos"
+                        data-chart="@Json(new { type = "bar", horizontal = true, legend = false, labels = new[] { "Visualizaciones", "Contactos", "Propuestas recibidas", "Acuerdos" }, datasets = new object[] { new { label = "Total", data = funnel } } })"></canvas></div>
+                }
+                else
+                {
+                    <partial name="_EmptyState" model='new EmptyStateModel("activity", "Aún no hay actividad", "Publica un vehículo y comparte el enlace para empezar a recibir visitas y propuestas.", "Publicar vehículo", "/panel/publish")' />
+                }
+            </div>
+        </section>
+    </div>
+    <div class="col-md-6">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Mis publicaciones por estado</h3><a href="/panel/listings" class="small fw-semibold">Ver todas</a></div>
+            <div class="ml-card__body">
+                @if (byStatus.Count > 0)
+                {
+                    <div class="chart-box chart-box--sm"><canvas data-label="Cantidad de publicaciones por estado"
+                        data-chart="@Json(new { type = "doughnut", labels = byStatus.Select(x => x.Label), datasets = new object[] { new { data = byStatus.Select(x => x.Count) } } })"></canvas></div>
+                }
+                else
+                {
+                    <partial name="_EmptyState" model='new EmptyStateModel("megaphone", "Todavía no tienes publicaciones", "Crea tu primera publicación en pocos pasos.", "Publicar vehículo", "/panel/publish")' />
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+<section class="ml-card">
+    <div class="ml-card__head"><h3>Propuestas que esperan tu respuesta</h3><a href="/panel/negotiations/received" class="small fw-semibold">Ver propuestas</a></div>
+    @if (Model.Pending.Count == 0)
+    {
+        <div class="ml-card__body"><p class="text-muted mb-0">No tienes propuestas pendientes de respuesta.</p></div>
+    }
+    else
+    {
+        <div class="table-wrap"><table class="ml-table">
+            <thead><tr><th>Publicación</th><th>Con</th><th class="num">Última oferta</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var n in Model.Pending)
+            {
+                var other = n.BuyerId == Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value) ? n.SellerName : n.BuyerName;
+                <tr>
+                    <td>@n.ListingTitle</td><td>@other</td>
+                    <td class="num">@Ui.Money(n.Currency, n.LastAmount) <small class="text-muted">@Ui.Period(n.Periodicity)</small></td>
+                    <td><span class="ml-badge ml-badge--@Ui.Tone(n.Status)">@Ui.NegotiationStatus(n.Status)</span></td>
+                    <td class="num"><a class="btn btn-sm btn-primary" href="/panel/negotiations/details/@n.Id">Responder</a></td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    }
+</section>
+
+@section Scripts { <script src="~/lib/chartjs/chart.umd.min.js"></script> }

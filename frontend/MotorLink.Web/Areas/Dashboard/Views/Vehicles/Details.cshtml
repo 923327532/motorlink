@@ -1,0 +1,66 @@
+@model VehicleRow
+@{
+    var v = Model.Vehicle;
+    var l = Model.Listing;
+}
+<div class="page-title">
+    <div><h2>@v.BrandName @v.ModelName @v.ModelYear</h2><p>@v.VehicleTypeName · @Ui.Condition(v.Condition) · @(v.Plate ?? "Sin placa")</p></div>
+    <div class="cluster">
+        <a class="btn btn-light" href="/panel/vehicles">Volver</a>
+        <a class="btn btn-primary" href="/panel/publish/@v.Id"><i data-lucide="pencil"></i>@(l is null ? "Publicar" : "Editar")</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-8">
+        <section class="ml-card mb-3">
+            <div class="ml-card__head"><h3>Fotografías (@v.Images.Count)</h3></div>
+            <div class="ml-card__body">
+                @if (v.Images.Count == 0) { <p class="text-muted mb-0">Este vehículo aún no tiene fotografías.</p> }
+                else { <ul class="photo-grid mt-0">@foreach (var i in v.Images) { <li class="photo-tile @(i.IsCover ? "is-cover" : "")"><img src="@i.Url" alt="Foto @(i.SortOrder + 1)" loading="lazy" width="320" height="240" />@if (i.IsCover) { <span class="ml-badge ml-badge--info">Portada</span> }</li> }</ul> }
+            </div>
+        </section>
+        <section class="ml-card">
+            <div class="ml-card__head"><h3>Ficha técnica</h3></div>
+            <div class="ml-card__body">
+                <dl class="spec-grid">
+                    <div class="spec"><dt>Versión</dt><dd>@(v.Version ?? "—")</dd></div>
+                    <div class="spec"><dt>Año fabricación / modelo</dt><dd>@v.ManufactureYear / @v.ModelYear</dd></div>
+                    <div class="spec"><dt>Kilometraje</dt><dd>@Ui.Number(v.Mileage) km</dd></div>
+                    <div class="spec"><dt>Propietarios anteriores</dt><dd>@v.PreviousOwners</dd></div>
+                    <div class="spec"><dt>Combustible</dt><dd>@Ui.Fuel(v.FuelType)</dd></div>
+                    <div class="spec"><dt>Transmisión</dt><dd>@Ui.Transmission(v.Transmission)</dd></div>
+                    <div class="spec"><dt>Cilindrada</dt><dd>@(v.EngineDisplacementCc is { } cc ? Ui.Number(cc) + " cc" : "—")</dd></div>
+                    <div class="spec"><dt>Puertas / asientos</dt><dd>@(v.Doors?.ToString() ?? "—") / @(v.Seats?.ToString() ?? "—")</dd></div>
+                    <div class="spec"><dt>Tracción</dt><dd>@Ui.Traction(v.Traction)</dd></div>
+                    <div class="spec"><dt>Capacidad de carga</dt><dd>@(v.LoadCapacityKg is { } kg ? Ui.Number(kg) + " kg" : "—")</dd></div>
+                    <div class="spec"><dt>Color</dt><dd>@(v.Color ?? "—")</dd></div>
+                    <div class="spec"><dt>Aire / GPS</dt><dd>@(v.HasAirConditioning ? "Sí" : "No") / @(v.HasGps ? "Sí" : "No")</dd></div>
+                    <div class="spec"><dt>Seguro / SOAT / Rev. técnica</dt><dd>@(v.HasInsurance ? "Sí" : "No") / @(v.HasValidSoat ? "Sí" : "No") / @(v.HasValidTechnicalReview ? "Sí" : "No")</dd></div>
+                </dl>
+                @if (!string.IsNullOrWhiteSpace(v.Description)) { <p class="mt-3 mb-0 pre-line">@v.Description</p> }
+                @if (!string.IsNullOrWhiteSpace(v.LegalOwnerName))
+                {
+                    <div class="notice mt-3"><i data-lucide="user"></i><div>Propietario legal declarado: <strong>@v.LegalOwnerName</strong>@(string.IsNullOrWhiteSpace(v.LegalOwnerRelationship) ? "" : " (" + v.LegalOwnerRelationship + ")"). Dato declarado por ti; MotorLink no lo verifica ni lo muestra públicamente.</div></div>
+                }
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-4">
+        <section class="ml-card">
+            <div class="ml-card__head"><h3>Publicación</h3></div>
+            <div class="ml-card__body stack">
+                @if (l is null) { <p class="text-muted mb-0">Este vehículo todavía no tiene publicación.</p><a class="btn btn-primary w-100" href="/panel/publish/@v.Id">Crear publicación</a> }
+                else
+                {
+                    <div><span class="ml-badge ml-badge--@Ui.Tone(l.Status)">@Ui.ListingStatus(l.Status)</span></div>
+                    <div class="fw-semibold">@l.Title</div>
+                    @foreach (var o in l.Operations.Where(o => o.IsActive))
+                    {
+                        <div class="price-row"><span class="price-row__label">@Ui.Operation(o.OperationType)</span><strong class="tabular">@(o.OperationType == "SALE" ? Ui.Money(o.Currency, o.SalePrice) : Ui.Money(o.Currency, o.DailyRate ?? o.WeeklyRate ?? o.MonthlyRate) + " " + (o.DailyRate is not null ? "por día" : o.WeeklyRate is not null ? "por semana" : "por mes"))</strong></div>
+                    }
+                    <a class="btn btn-light w-100" href="/panel/listings">Gestionar publicación</a>
+                }
+            </div>
+        </section>
+    </div>
+</div>

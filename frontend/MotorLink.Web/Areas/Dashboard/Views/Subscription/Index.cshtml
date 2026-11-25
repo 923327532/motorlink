@@ -1,0 +1,110 @@
+@model SubscriptionViewModel
+@{
+    var c = Model.Current; var p = c.Plan; var s = c.Subscription; var u = c.Usage;
+    var paid = p.MonthlyPrice > 0;
+    var daysLeft = s.EndsAt is { } e ? (int)Math.Ceiling((e.ToUniversalTime() - DateTime.UtcNow).TotalDays) : (int?)null;
+    string Feat(bool on, string text) => on ? text : text + " (no incluido)";
+}
+<div class="page-title">
+    <div><h2>Mi suscripción</h2><p>Plan vigente, consumo de límites y beneficios.</p></div>
+    <a class="btn btn-light" href="/panel/subscription/payments"><i data-lucide="receipt"></i>Historial de pagos</a>
+</div>
+
+<div class="notice mb-3"><i data-lucide="flask-conical"></i><div><strong>Flujo de demostración.</strong> Los pagos de esta versión son simulados: no se solicitan tarjetas ni se realizan cobros reales.</div></div>
+
+@if (Model.Pending is { } pending)
+{
+    <div class="notice notice--warning mb-3">
+        <i data-lucide="clock"></i>
+        <div class="w-100">Tienes una solicitud pendiente del plan <strong>@pending.PlanName</strong> (@Ui.Money("PEN", pending.MonthlyPrice) al mes).</div>
+        <div class="cluster nowrap">
+            <a class="btn btn-sm btn-primary" href="/panel/subscription/checkout/@pending.Id">Completar</a>
+            <form asp-action="Cancel" asp-route-id="@pending.Id" method="post" data-no-loading><button class="btn btn-sm btn-light" type="submit">Descartar</button></form>
+        </div>
+    </div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Plan actual</h3><span class="ml-badge ml-badge--@Ui.Tone(s.Status)">@Ui.SubscriptionStatus(s.Status)</span></div>
+            <div class="ml-card__body">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+                    <div><div class="fs-3 fw-bold">@p.Name</div><div class="text-muted">@(paid ? Ui.Money("PEN", p.MonthlyPrice) + " al mes" : "Sin costo")</div></div>
+                    <div class="text-end">
+                        <div class="small text-muted">Vencimiento</div>
+                        <div class="fw-semibold">@(s.EndsAt is null ? "Sin vencimiento" : Ui.Date(s.EndsAt))</div>
+                        @if (daysLeft is not null) { <div class="small @(daysLeft <= 7 ? "text-danger" : "text-muted")">@(daysLeft <= 0 ? "Vence hoy" : $"Quedan {daysLeft} día{(daysLeft == 1 ? "" : "s")}")</div> }
+                    </div>
+                </div>
+                @if (paid) { <p class="small text-muted">Origen del pago: @Ui.PaymentMode(s.PaymentMode)@(s.CancelledAt is not null ? " · Renovación cancelada el " + Ui.Date(s.CancelledAt) : "")</p> }
+
+                <div class="stack">
+                    <div>
+                        <div class="d-flex justify-content-between small"><span>Publicaciones activas</span><strong>@u.ActiveListings de @u.MaxActiveListings</strong></div>
+                        <progress class="ml-progress @(u.ActiveListings >= u.MaxActiveListings ? "is-full" : "")" value="@u.ActiveListings" max="@Math.Max(u.MaxActiveListings, 1)" aria-label="Publicaciones activas usadas"></progress>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between small"><span>Publicaciones destacadas</span><strong>@u.FeaturedListings de @u.MaxFeaturedListings</strong></div>
+                        <progress class="ml-progress @(u.MaxFeaturedListings > 0 && u.FeaturedListings >= u.MaxFeaturedListings ? "is-full" : "")" value="@u.FeaturedListings" max="@Math.Max(u.MaxFeaturedListings, 1)" aria-label="Destacados usados"></progress>
+                    </div>
+                    <div class="d-flex justify-content-between small"><span>Fotografías permitidas por vehículo</span><strong>@u.MaxPhotosPerVehicle</strong></div>
+                </div>
+
+                @if (paid && s.Status == "ACTIVE")
+                {
+                    <div class="cluster mt-4">
+                        <form asp-action="Renew" method="post"><button type="submit" class="btn btn-primary"><i data-lucide="refresh-cw"></i>Renovar un mes más</button></form>
+                        @if (s.CancelledAt is null)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@s.Id" method="post"><button type="submit" class="btn btn-outline-danger" data-confirm="Tu plan seguirá activo hasta el @Ui.Date(s.EndsAt) y luego pasarás al plan Gratis. Las publicaciones que excedan sus límites se pausarán; no se elimina nada." data-confirm-title="Cancelar renovación" data-confirm-ok="Cancelar renovación" data-confirm-variant="danger">Cancelar renovación</button></form>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-5">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Beneficios de tu plan</h3></div>
+            <div class="ml-card__body">
+                <ul class="check-list">
+                    <li><i data-lucide="check-circle-2" class="icon yes"></i>@p.MaxActiveListings publicaciones activas</li>
+                    <li><i data-lucide="check-circle-2" class="icon yes"></i>@p.MaxPhotosPerVehicle fotografías por vehículo</li>
+                    <li class="@(p.MaxFeaturedListings > 0 ? "" : "text-muted")"><i data-lucide="@(p.MaxFeaturedListings > 0 ? "check-circle-2" : "circle")" class="icon @(p.MaxFeaturedListings > 0 ? "yes" : "no")"></i>@(p.MaxFeaturedListings > 0 ? p.MaxFeaturedListings + " destacadas" : "Sin destacados")</li>
+                    <li><i data-lucide="check-circle-2" class="icon yes"></i>Estadísticas @(p.HasAdvancedStats ? "avanzadas" : "básicas")</li>
+                    <li class="@(p.HasBusinessProfile ? "" : "text-muted")"><i data-lucide="@(p.HasBusinessProfile ? "check-circle-2" : "circle")" class="icon @(p.HasBusinessProfile ? "yes" : "no")"></i>Perfil empresarial</li>
+                    <li class="@(p.CanExportReports ? "" : "text-muted")"><i data-lucide="@(p.CanExportReports ? "check-circle-2" : "circle")" class="icon @(p.CanExportReports ? "yes" : "no")"></i>Exportación de reportes</li>
+                    <li class="@(p.HasPrioritySupport ? "" : "text-muted")"><i data-lucide="@(p.HasPrioritySupport ? "check-circle-2" : "circle")" class="icon @(p.HasPrioritySupport ? "yes" : "no")"></i>Soporte prioritario</li>
+                    <li><i data-lucide="check-circle-2" class="icon yes"></i>Buscar, favoritos, negociar y contactar</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</div>
+
+<section class="mb-4" aria-labelledby="change-title">
+    <div class="section-head"><div><h2 id="change-title" class="fs-4">Cambiar de plan</h2><p>El nuevo plan se activa al confirmar el pago de demostración. No hay prorrateo.</p></div></div>
+    <div class="row g-3">
+        @foreach (var plan in Model.Plans.OrderBy(x => x.SortOrder))
+        {
+            <div class="col-md-6 col-xl"><partial name="_PlanCard" model="plan" view-data='new ViewDataDictionary(ViewData) { ["CurrentCode"] = p.Code, ["Compact"] = true }' /></div>
+        }
+    </div>
+</section>
+
+<section class="ml-card">
+    <div class="ml-card__head"><h3>Historial de suscripciones</h3></div>
+    <div class="table-wrap">
+        <table class="ml-table">
+            <caption class="visually-hidden">Historial de suscripciones</caption>
+            <thead><tr><th>Plan</th><th>Estado</th><th>Origen</th><th>Inicio</th><th>Vencimiento</th></tr></thead>
+            <tbody>
+            @foreach (var h in Model.History.Items)
+            {
+                <tr><td class="fw-semibold">@h.PlanName</td><td><span class="ml-badge ml-badge--@Ui.Tone(h.Status)">@Ui.SubscriptionStatus(h.Status)</span></td><td>@Ui.PaymentMode(h.PaymentMode)</td><td>@Ui.Date(h.StartsAt)</td><td>@(h.EndsAt is null ? "—" : Ui.Date(h.EndsAt))</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

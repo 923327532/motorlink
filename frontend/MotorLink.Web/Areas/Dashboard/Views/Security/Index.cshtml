@@ -1,0 +1,18 @@
+@model ChangePasswordViewModel
+<div class="page-title"><div><h2>Seguridad</h2><p>Protege tu cuenta con una contraseña robusta.</p></div></div>
+<div class="row">
+    <div class="col-lg-6 col-xl-5">
+        <form class="ml-card" asp-action="Index" method="post" novalidate>
+            <div class="ml-card__head"><h3>Cambiar contraseña</h3></div>
+            <div class="ml-card__body stack">
+                <div asp-validation-summary="ModelOnly" role="alert"></div>
+                <div class="notice"><i data-lucide="info"></i><div>Al cambiarla se cerrarán todas tus sesiones activas y deberás iniciar sesión de nuevo.</div></div>
+                <div><label asp-for="CurrentPassword" class="form-label"></label><input asp-for="CurrentPassword" class="form-control" autocomplete="current-password" /><span asp-validation-for="CurrentPassword" class="field-validation-error"></span></div>
+                <div><label asp-for="NewPassword" class="form-label"></label><input asp-for="NewPassword" class="form-control" autocomplete="new-password" aria-describedby="np-help" /><div class="form-text" id="np-help">Mínimo 8 caracteres, con mayúscula, minúscula y un número.</div><span asp-validation-for="NewPassword" class="field-validation-error"></span></div>
+                <div><label asp-for="ConfirmNewPassword" class="form-label"></label><input asp-for="ConfirmNewPassword" class="form-control" autocomplete="new-password" /><span asp-validation-for="ConfirmNewPassword" class="field-validation-error"></span></div>
+            </div>
+            <div class="ml-card__head border-top border-bottom-0"><span></span><button type="submit" class="btn btn-primary">Actualizar contraseña</button></div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

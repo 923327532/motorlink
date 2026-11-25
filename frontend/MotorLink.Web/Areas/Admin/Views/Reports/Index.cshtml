@@ -1,0 +1,48 @@
+@model ReportsViewModel
+@{
+    var r = Model.Revenue;
+}
+<div class="page-title"><div><h2>Reportes</h2><p>Ingresos por plan y exportaciones. Los datos provienen de consultas ADO.NET (SqlDataReader y DataSet desconectado).</p></div></div>
+
+<section class="ml-card mb-4">
+    <div class="ml-card__head"><h3>Ingresos mensuales por plan y origen del pago</h3><span class="small text-muted">Generado @Ui.DateTimeText(r.GeneratedAt)</span></div>
+    <div class="table-wrap"><table class="ml-table">
+        <caption class="visually-hidden">Suscripciones activas y valor mensual por plan y origen</caption>
+        <thead><tr><th>Plan</th><th class="num">Precio</th><th class="num">Activas</th><th class="num">Reales</th><th class="num">Demostración</th><th class="num">Otorgadas</th><th class="num">Sin pago</th><th class="num">Valor real</th><th class="num">Valor simulado</th><th class="num">Valor otorgado</th></tr></thead>
+        <tbody>
+        @foreach (var p in r.Plans)
+        {
+            <tr><td class="fw-semibold">@p.PlanName</td><td class="num">@Ui.Money("PEN", p.MonthlyPrice)</td><td class="num">@p.ActiveTotal</td><td class="num">@p.Real</td><td class="num">@p.Simulated</td><td class="num">@p.Complimentary</td><td class="num">@p.Unpaid</td>
+                <td class="num">@Ui.Money("PEN", p.MonthlyValueReal)</td><td class="num">@Ui.Money("PEN", p.MonthlyValueSimulated)</td><td class="num">@Ui.Money("PEN", p.MonthlyValueComplimentary)</td></tr>
+        }
+        </tbody>
+        <tfoot><tr class="fw-bold"><td colspan="2">Totales</td><td class="num">@r.TotalActiveSubscriptions</td><td colspan="4"></td><td class="num">@Ui.Money("PEN", r.TotalReal)</td><td class="num">@Ui.Money("PEN", r.TotalSimulated)</td><td class="num">@Ui.Money("PEN", r.TotalComplimentary)</td></tr></tfoot>
+    </table></div>
+    <div class="ml-card__body"><p class="hint mb-0">«Real» solo contará pagos de una pasarela real (aún no integrada). «Demostración» son pagos simulados y «Otorgadas» son planes activados por administración sin pago: ninguno es dinero ingresado.</p></div>
+</section>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Usuarios por tipo de perfil</h3></div>
+            @if (Model.Profiles.Count == 0) { <partial name="_EmptyState" model='new EmptyStateModel("users", "Sin datos", "Todavía no hay usuarios registrados.")' /> }
+            else
+            {
+                <table class="ml-table"><thead><tr><th>Tipo de perfil</th><th class="num">Usuarios</th></tr></thead>
+                    <tbody>@foreach (var p in Model.Profiles) { <tr><td>@(p.ProfileType is "Business" or "BUSINESS" ? "Empresarial" : "Personal")</td><td class="num">@p.TotalUsers</td></tr> }</tbody></table>
+            }
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="ml-card h-100">
+            <div class="ml-card__head"><h3>Exportar datos (CSV)</h3></div>
+            <div class="ml-card__body stack">
+                <p class="text-muted mb-0">Los campos que podrían interpretarse como fórmulas se neutralizan para abrir el archivo con seguridad en hojas de cálculo.</p>
+                <div class="cluster">
+                    <a class="btn btn-light" href="/admin/reports/download?report=users.csv"><i data-lucide="download"></i>Usuarios</a>
+                    <a class="btn btn-light" href="/admin/reports/download?report=subscriptions.csv"><i data-lucide="download"></i>Suscripciones</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

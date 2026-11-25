@@ -1,0 +1,9 @@
+@* Contenedor accesible de notificaciones visuales. Los mensajes del servidor (TempData) se leen desde data-attributes; JS añade los dinámicos. *@
+<div class="toast-stack" id="toast-stack" role="region" aria-label="Notificaciones" aria-live="polite">
+    @foreach (var t in TempData.TakeToasts())
+    {
+        <div data-toast data-type="@t.Type" data-message="@t.Message" hidden></div>
+    }
+</div>
+@* Token antiforgery para las llamadas fetch (cabecera X-CSRF-TOKEN) *@
+<form id="csrf-form" hidden>@Html.AntiForgeryToken()</form>

@@ -1,0 +1,76 @@
+@model LocationsViewModel
+@{
+    var tabs = new (string K, string L)[] { ("departments", "Departamentos"), ("provinces", "Provincias"), ("districts", "Distritos") };
+    var depNames = Model.Departments.ToDictionary(d => d.Id, d => d.Name);
+    var provNames = Model.Provinces.ToDictionary(p => p.Id, p => p.Name);
+    var kind = Model.Tab;
+    var parents = Model.Tab == "provinces" ? Model.Departments.Select(d => (d.Id, d.Name)).ToList() : Model.Provinces.Select(p => (p.Id, p.Name)).ToList();
+    var codeLen = Model.Tab == "departments" ? 2 : Model.Tab == "provinces" ? 4 : 6;
+}
+<div class="page-title">
+    <div><h2>Ubicaciones</h2><p>Departamentos, provincias y distritos (UBIGEO). El código no se puede modificar y debe iniciar con el de su nivel superior.</p></div>
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#loc-modal" data-fill='{"id":"","code":"","name":"","parentId":""}'><i data-lucide="plus"></i>Nueva ubicación</button>
+</div>
+<div class="notice mb-3"><i data-lucide="info"></i><div>El catálogo cargado incluye los 25 departamentos oficiales y un <strong>subconjunto de demostración</strong> de provincias y distritos. Debe completarse con el catálogo oficial del INEI antes de producción.</div></div>
+<nav class="nav-tabs-ml" aria-label="Nivel">@foreach (var t in tabs) { <a href="/admin/locations?tab=@t.K" class="@(Model.Tab == t.K ? "is-active" : "")">@t.L</a> }</nav>
+
+<section class="ml-card">
+    <form class="table-toolbar" method="get" role="search" data-no-loading>
+        <input type="hidden" name="tab" value="@Model.Tab" />
+        <div class="d-flex flex-wrap gap-2 flex-grow-1">
+            <input class="form-control w-auto flex-grow-1" type="search" name="search" value="@Model.Search" placeholder="Buscar por nombre" aria-label="Buscar" />
+            @if (Model.Tab == "provinces") { <select class="form-select w-auto" name="departmentId" aria-label="Departamento" data-autosubmit><option value="">Todos los departamentos</option>@foreach (var d in Model.Departments) { <option value="@d.Id" selected="@(Model.DepartmentId == d.Id)">@d.Name</option> }</select> }
+            @if (Model.Tab == "districts") { <select class="form-select w-auto" name="provinceId" aria-label="Provincia" data-autosubmit><option value="">Todas las provincias</option>@foreach (var p in Model.Provinces) { <option value="@p.Id" selected="@(Model.ProvinceId == p.Id)">@p.Name</option> }</select> }
+        </div>
+        <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>Buscar</button>
+    </form>
+    <div class="table-wrap"><table class="ml-table">
+        <caption class="visually-hidden">@tabs.First(t => t.K == Model.Tab).L</caption>
+        <thead><tr><th>Código</th><th>Nombre</th>@if (Model.Tab != "departments") { <th>@(Model.Tab == "provinces" ? "Departamento" : "Provincia")</th> }<th>Estado</th><th></th></tr></thead>
+        <tbody>
+        @if (Model.Tab == "departments")
+        {
+            @foreach (var d in Model.Departments)
+            {
+                <tr><td class="tabular">@d.Code</td><td class="fw-semibold">@d.Name</td><td><span class="ml-badge @(d.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(d.IsActive ? "Activo" : "Inactivo")</span></td>
+                    <td><div class="table-actions"><button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#loc-modal" data-fill='@Json.Serialize(new { id = d.Id, code = d.Code, name = d.Name, parentId = "" })'>Editar</button>@await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, d.Id, d.IsActive, Model.Tab, d.Name))</div></td></tr>
+            }
+        }
+        else if (Model.Tab == "provinces")
+        {
+            @foreach (var p in Model.Provinces)
+            {
+                <tr><td class="tabular">@p.Code</td><td class="fw-semibold">@p.Name</td><td>@depNames.GetValueOrDefault(p.DepartmentId, "—")</td><td><span class="ml-badge @(p.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(p.IsActive ? "Activa" : "Inactiva")</span></td>
+                    <td><div class="table-actions"><button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#loc-modal" data-fill='@Json.Serialize(new { id = p.Id, code = p.Code, name = p.Name, parentId = p.DepartmentId })'>Editar</button>@await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, p.Id, p.IsActive, Model.Tab, p.Name))</div></td></tr>
+            }
+        }
+        else
+        {
+            @foreach (var d in Model.Districts)
+            {
+                <tr><td class="tabular">@d.Code</td><td class="fw-semibold">@d.Name</td><td>@provNames.GetValueOrDefault(d.ProvinceId, "—")</td><td><span class="ml-badge @(d.IsActive ? "ml-badge--success" : "ml-badge--danger")">@(d.IsActive ? "Activo" : "Inactivo")</span></td>
+                    <td><div class="table-actions"><button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#loc-modal" data-fill='@Json.Serialize(new { id = d.Id, code = d.Code, name = d.Name, parentId = d.ProvinceId })'>Editar</button>@await Html.PartialAsync("_CatalogRowActions", new CatalogRowActions(kind, d.Id, d.IsActive, Model.Tab, d.Name))</div></td></tr>
+            }
+        }
+        </tbody>
+    </table></div>
+</section>
+
+<div class="modal fade" id="loc-modal" tabindex="-1" aria-labelledby="loc-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" asp-action="Save" method="post">
+            <div class="modal-header"><h2 class="modal-title" id="loc-title">@(Model.Tab == "departments" ? "Departamento" : Model.Tab == "provinces" ? "Provincia" : "Distrito")</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body stack">
+                <input type="hidden" name="kind" value="@kind" /><input type="hidden" name="tab" value="@Model.Tab" /><input type="hidden" name="id" />
+                @if (Model.Tab != "departments")
+                {
+                    <div><label class="form-label" for="loc-parent">@(Model.Tab == "provinces" ? "Departamento" : "Provincia") *</label>
+                        <select id="loc-parent" name="parentId" class="form-select" required><option value="">Selecciona</option>@foreach (var (id, name) in parents) { <option value="@id">@name</option> }</select></div>
+                }
+                <div><label class="form-label" for="loc-code">Código UBIGEO (@codeLen dígitos) *</label><input id="loc-code" name="code" class="form-control tabular" required pattern="\d{@codeLen}" maxlength="@codeLen" inputmode="numeric" /></div>
+                <div><label class="form-label" for="loc-name">Nombre *</label><input id="loc-name" name="name" class="form-control" required maxlength="100" /></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,116 @@
+@model NegotiationPageViewModel
+@{
+    var n = Model.Detail.Negotiation;
+    var offers = Model.Detail.Offers;
+    var last = offers.Last();
+    var open = n.Status is "PENDING" or "COUNTER_OFFER";
+    var awaitingMe = Model.Detail.AwaitingMyResponse;
+    var other = Model.IAmBuyer ? n.SellerName : n.BuyerName;
+    var canCancel = open && (Model.IAmBuyer || last.OfferedById == Model.MeId);
+    string Who(OfferInfo o) => o.OfferedById == n.BuyerId ? n.BuyerName : n.SellerName;
+    string OfferState(OfferInfo o)
+    {
+        if (o.Id != last.Id) return "Superada";
+        return n.Status switch { "ACCEPTED" => "Aceptada", "REJECTED" => "Rechazada", "CANCELLED" => "Cancelada", "EXPIRED" => "Vencida", _ => "Vigente" };
+    }
+}
+<nav class="breadcrumb-ml" aria-label="Ruta"><a href="/panel/negotiations/@(Model.IAmBuyer ? "sent" : "received")">@(Model.IAmBuyer ? "Propuestas enviadas" : "Propuestas recibidas")</a><span>/</span><span aria-current="page">Negociación</span></nav>
+
+<div class="page-title">
+    <div>
+        <h2>@n.ListingTitle</h2>
+        <p>@Ui.Operation(n.OperationType) · con <strong>@other</strong> · iniciada el @Ui.Date(n.CreatedAt)</p>
+    </div>
+    <span class="ml-badge ml-badge--@Ui.Tone(n.Status) fs-6">@Ui.NegotiationStatus(n.Status)</span>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        @if (n.Status == "ACCEPTED")
+        {
+            <div class="agreement mb-3" role="status">
+                <div class="d-flex align-items-center gap-2 mb-1 fw-semibold text-success"><i data-lucide="handshake"></i>Acuerdo de precio</div>
+                <div class="price price--lg">@Ui.Money(n.Currency, Model.Detail.AgreedAmount) <small>@Ui.Period(n.Periodicity)</small></div>
+                <p class="mb-0 mt-2 small">Ambas partes aceptaron este precio. <strong>No es una confirmación de pago ni de entrega:</strong> coordinen directamente los detalles, verifiquen la documentación del vehículo y formalicen el contrato por su cuenta.</p>
+            </div>
+        }
+        else if (!open)
+        {
+            <div class="notice notice--@(n.Status is "REJECTED" or "CANCELLED" ? "danger" : "warning") mb-3"><i data-lucide="info"></i><div>Esta negociación está <strong>@Ui.NegotiationStatus(n.Status).ToLowerInvariant()</strong> y ya no puede modificarse. Puedes iniciar una nueva propuesta desde la publicación.</div></div>
+        }
+
+        <section class="ml-card" aria-labelledby="conv-title">
+            <div class="ml-card__head"><h3 id="conv-title">Historial de propuestas</h3><span class="text-muted small">@offers.Count oferta@(offers.Count == 1 ? "" : "s")</span></div>
+            <div class="ml-card__body deal">
+                @foreach (var o in offers)
+                {
+                    var mine = o.OfferedById == Model.MeId;
+                    <article class="offer @(mine ? "offer--mine" : "offer--theirs") @(o.Id == last.Id ? "is-last" : "")" aria-label="Oferta @o.Sequence de @Who(o)">
+                        <div class="offer__who">@(mine ? "Tú" : Who(o)) · @Ui.DateTimeText(o.CreatedAt)</div>
+                        <div class="offer__bubble">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div class="offer__amount">@Ui.Money(o.Currency, o.Amount) <small>@(o.Periodicity is null ? "· pago único" : Ui.Period(o.Periodicity))</small></div>
+                                <span class="ml-badge @(o.Id == last.Id && n.Status == "ACCEPTED" ? "ml-badge--success" : o.Id == last.Id && open ? "ml-badge--info" : "")">@OfferState(o)</span>
+                            </div>
+                            <div class="small text-muted">Moneda: @o.Currency</div>
+                            @if (!string.IsNullOrWhiteSpace(o.Message)) { <p class="offer__msg">@o.Message</p> }
+                        </div>
+                    </article>
+                }
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-4">
+        <section class="ml-card mb-3">
+            <div class="ml-card__head"><h3>Condiciones</h3></div>
+            <div class="ml-card__body">
+                <dl class="kv">
+                    <dt>Precio publicado</dt><dd>@(Model.Detail.ListedPrice is { } lp ? Ui.Money(n.Currency, lp) + " " + Ui.Period(n.Periodicity) : "—")</dd>
+                    <dt>Primera oferta</dt><dd>@Ui.Money(n.Currency, n.InitialAmount)</dd>
+                    <dt>Última oferta</dt><dd>@Ui.Money(n.Currency, n.LastAmount)</dd>
+                    <dt>Moneda</dt><dd>@n.Currency</dd>
+                    <dt>Periodicidad</dt><dd>@(n.Periodicity is null ? "Pago único" : Ui.Period(n.Periodicity))</dd>
+                    @if (open) { <dt>Vence</dt><dd>@Ui.DateTimeText(n.ExpiresAt)</dd> }
+                    <dt>Actualizada</dt><dd>@Ui.DateTimeText(n.UpdatedAt ?? n.CreatedAt)</dd>
+                </dl>
+                <a class="btn btn-light w-100 mt-3" href="/vehiculos/@n.ListingId">Ver publicación</a>
+            </div>
+        </section>
+
+        @if (open)
+        {
+            <section class="ml-card" aria-labelledby="act-title">
+                <div class="ml-card__head"><h3 id="act-title">@(awaitingMe ? "Tu respuesta" : "Esperando respuesta")</h3></div>
+                <div class="ml-card__body stack">
+                    @if (awaitingMe)
+                    {
+                        <form asp-action="Accept" asp-route-id="@n.Id" method="post">
+                            <input type="hidden" name="offerId" value="@last.Id" />
+                            <button type="submit" class="btn btn-success w-100" data-confirm="Aceptarás @Ui.Money(n.Currency, last.Amount) @Ui.Period(n.Periodicity). Es un acuerdo de precio, no confirma pago ni entrega." data-confirm-title="Aceptar propuesta" data-confirm-ok="Aceptar propuesta"><i data-lucide="check"></i>Aceptar @Ui.Money(n.Currency, last.Amount)</button>
+                        </form>
+                        <form asp-action="Counter" asp-route-id="@n.Id" method="post" novalidate>
+                            <label class="form-label" for="counter-amount">Hacer una contrapropuesta</label>
+                            <div class="input-group mb-2"><span class="input-group-text">@Ui.Symbol(n.Currency)</span><input id="counter-amount" name="Amount" type="number" min="0.01" step="0.01" inputmode="decimal" class="form-control" required /></div>
+                            <textarea name="Message" class="form-control mb-2" rows="2" maxlength="1000" placeholder="Mensaje (opcional)" aria-label="Mensaje de la contrapropuesta"></textarea>
+                            <button type="submit" class="btn btn-primary w-100"><i data-lucide="repeat-2"></i>Enviar contrapropuesta</button>
+                        </form>
+                        <form asp-action="Reject" asp-route-id="@n.Id" method="post">
+                            <button type="submit" class="btn btn-outline-danger w-100" data-confirm="La contraparte será notificada de que rechazaste su propuesta." data-confirm-title="Rechazar propuesta" data-confirm-ok="Rechazar" data-confirm-variant="danger"><i data-lucide="x"></i>Rechazar</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="notice"><i data-lucide="hourglass"></i><div>Enviaste la última oferta. Te avisaremos cuando @other responda. La negociación vence el @Ui.Date(n.ExpiresAt).</div></div>
+                    }
+                    @if (canCancel)
+                    {
+                        <form asp-action="Cancel" asp-route-id="@n.Id" method="post">
+                            <button type="submit" class="btn btn-light w-100" data-confirm="Se cancelará esta negociación para ambas partes." data-confirm-title="Cancelar negociación" data-confirm-ok="Cancelar negociación" data-confirm-variant="danger">Cancelar negociación</button>
+                        </form>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+</div>

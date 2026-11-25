@@ -1,0 +1,21 @@
+@model List<(string Text, string? Url, bool Active, bool Disabled)>
+@if (Model.Count > 3)
+{
+    <nav aria-label="Paginación">
+        <ul class="ml-pagination">
+            @foreach (var p in Model)
+            {
+                <li>
+                    @if (p.Url is not null && !p.Active)
+                    {
+                        <a href="@p.Url" aria-label="@(p.Text is "Anterior" or "Siguiente" ? p.Text : "Página " + p.Text)">@p.Text</a>
+                    }
+                    else
+                    {
+                        <span class="@(p.Active ? "is-active" : "is-disabled")" aria-current="@(p.Active ? "page" : null)">@p.Text</span>
+                    }
+                </li>
+            }
+        </ul>
+    </nav>
+}

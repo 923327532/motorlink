@@ -1,0 +1,256 @@
+@model DetailViewModel
+@{
+    var d = Model.Detail;
+    var v = d.Vehicle;
+    var authed = User.Identity?.IsAuthenticated == true;
+    var ops = d.Operations.Where(o => o.IsActive).ToList();
+    var openOps = ops.Where(o => o.Status == "AVAILABLE").ToList();
+    var work = ops.Where(o => o.WorkRent is not null).ToList();
+    var images = d.Images.Count > 0 ? d.Images : [new ImageInfo(Guid.Empty, "/images/placeholder-vehicle.svg", 0, true)];
+    var title = $"{v.Brand} {v.Model} {v.ModelYear}";
+    ViewData["Nav"] = ops.Any(o => o.OperationType == "WORK_RENT") ? "work" : ops.Any(o => o.OperationType == "RENT") ? "rent" : "buy";
+    string Day(OperationInfo o) => Ui.Money(o.Currency, o.DailyRate);
+}
+<div class="ml-container py-4" data-listing-page="@d.Id">
+    <nav class="breadcrumb-ml" aria-label="Ruta">
+        <a href="/">Inicio</a><span>/</span><a href="/vehiculos">Vehículos</a><span>/</span><a href="/vehiculos?q=@Uri.EscapeDataString(v.Brand)">@v.Brand</a><span>/</span><span aria-current="page">@v.Model</span>
+    </nav>
+
+    <div class="detail-layout">
+        <div class="stack">
+            <div class="gallery" data-gallery tabindex="0" aria-label="Galería de fotografías">
+                <div class="gallery__main">
+                    <img src="@Ui.Img(images[0].Url)" alt="@title" data-gallery-main width="1280" height="800" />
+                    @if (images.Count > 1)
+                    {
+                        <button type="button" class="gallery__nav gallery__nav--prev" data-gallery-prev aria-label="Foto anterior"><i data-lucide="chevron-left"></i></button>
+                        <button type="button" class="gallery__nav gallery__nav--next" data-gallery-next aria-label="Foto siguiente"><i data-lucide="chevron-right"></i></button>
+                        <span class="gallery__count" data-gallery-count aria-live="polite">1 / @images.Count</span>
+                    }
+                </div>
+                @if (images.Count > 1)
+                {
+                    <div class="gallery__thumbs">
+                        @for (var i = 0; i < images.Count; i++)
+                        {
+                            <button type="button" class="gallery__thumb" data-gallery-thumb data-full="@images[i].Url" data-alt="@title, foto @(i + 1)" aria-current="@(i == 0 ? "true" : "false")" aria-label="Ver foto @(i + 1)">
+                                <img src="@images[i].Url" alt="" loading="lazy" width="168" height="126" />
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div>
+                <div class="cluster mb-2">
+                    @foreach (var o in ops.Select(x => x.OperationType).Distinct()) { <span class="ml-badge @(o == "WORK_RENT" ? "ml-badge--dark" : "ml-badge--info")">@Ui.Operation(o)</span> }
+                    <span class="ml-badge">@Ui.Condition(v.Condition)</span>
+                    @if (d.IsFeatured) { <span class="ml-badge ml-badge--info">Destacada</span> }
+                    @if (!d.IsAvailable) { <span class="ml-badge ml-badge--warning">@Ui.ListingStatus(d.Status)</span> }
+                </div>
+                <h1 class="mb-1">@title</h1>
+                <p class="text-muted mb-1">@d.Title</p>
+                <p class="text-muted"><i data-lucide="map-pin" class="icon--sm"></i> @d.District, @d.Province, @d.Department@(string.IsNullOrWhiteSpace(d.LocationReference) ? "" : " · " + d.LocationReference)</p>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(d.Description))
+            {
+                <section class="ml-card"><div class="ml-card__body"><h2>Descripción</h2><p class="mb-0 pre-line">@d.Description</p></div></section>
+            }
+
+            <section class="ml-card">
+                <div class="ml-card__body">
+                    <h2>Características</h2>
+                    <dl class="spec-grid">
+                        <div class="spec"><dt>Marca</dt><dd>@v.Brand</dd></div>
+                        <div class="spec"><dt>Modelo</dt><dd>@v.Model @v.Version</dd></div>
+                        <div class="spec"><dt>Tipo</dt><dd>@v.VehicleType</dd></div>
+                        <div class="spec"><dt>Año de fabricación</dt><dd>@v.ManufactureYear</dd></div>
+                        <div class="spec"><dt>Año del modelo</dt><dd>@v.ModelYear</dd></div>
+                        <div class="spec"><dt>Kilometraje</dt><dd>@Ui.Number(v.Mileage) km</dd></div>
+                        <div class="spec"><dt>Estado</dt><dd>@Ui.Condition(v.Condition)</dd></div>
+                        <div class="spec"><dt>Propietarios anteriores</dt><dd>@v.PreviousOwners</dd></div>
+                        <div class="spec"><dt>Combustible</dt><dd>@Ui.Fuel(v.FuelType)</dd></div>
+                        <div class="spec"><dt>Transmisión</dt><dd>@Ui.Transmission(v.Transmission)</dd></div>
+                        @if (v.EngineDisplacementCc is > 0) { <div class="spec"><dt>Cilindrada</dt><dd>@Ui.Number(v.EngineDisplacementCc.Value) cc</dd></div> }
+                        @if (v.Doors is > 0) { <div class="spec"><dt>Puertas</dt><dd>@v.Doors</dd></div> }
+                        @if (v.Seats is > 0) { <div class="spec"><dt>Asientos</dt><dd>@v.Seats</dd></div> }
+                        @if (v.Traction is not null) { <div class="spec"><dt>Tracción</dt><dd>@Ui.Traction(v.Traction)</dd></div> }
+                        @if (v.LoadCapacityKg is > 0) { <div class="spec"><dt>Capacidad de carga</dt><dd>@Ui.Number(v.LoadCapacityKg.Value) kg</dd></div> }
+                        @if (!string.IsNullOrEmpty(v.Color)) { <div class="spec"><dt>Color</dt><dd>@v.Color</dd></div> }
+                        @if (!string.IsNullOrEmpty(v.MaskedPlate)) { <div class="spec"><dt>Placa</dt><dd class="tabular">@v.MaskedPlate</dd></div> }
+                    </dl>
+                    <h3 class="mt-4 mb-3 fs-6">Equipamiento y documentos declarados</h3>
+                    <ul class="check-list">
+                        @foreach (var (label, on) in new[] { ("Aire acondicionado", v.HasAirConditioning), ("GPS", v.HasGps), ("Seguro vehicular", v.HasInsurance), ("SOAT vigente", v.HasValidSoat), ("Revisión técnica vigente", v.HasValidTechnicalReview) })
+                        {
+                            <li class="@(on ? "" : "text-muted")"><i data-lucide="@(on ? "check-circle-2" : "circle")" class="icon @(on ? "yes" : "no")"></i>@label</li>
+                        }
+                    </ul>
+                    <p class="hint mt-3 mb-0">Los datos y documentos son declarados por el anunciante. MotorLink no verifica la titularidad ni la documentación del vehículo: solicita comprobarlos antes de cualquier acuerdo.</p>
+                </div>
+            </section>
+
+            @foreach (var o in work)
+            {
+                var w = o.WorkRent!;
+                <section class="ml-card" aria-labelledby="work-conditions">
+                    <div class="ml-card__head"><h2 id="work-conditions">Condiciones para trabajar</h2><span class="ml-badge ml-badge--dark">Declaradas por el propietario</span></div>
+                    <div class="ml-card__body">
+                        <dl class="spec-grid">
+                            <div class="spec"><dt>Uso permitido</dt><dd>@Ui.WorkUse(w.AllowedUse)</dd></div>
+                            <div class="spec"><dt>Turno</dt><dd>@Ui.Shift(w.Shift)</dd></div>
+                            <div class="spec"><dt>Experiencia mínima</dt><dd>@(w.MinExperienceYears == 0 ? "No requerida" : w.MinExperienceYears + (w.MinExperienceYears == 1 ? " año" : " años"))</dd></div>
+                            <div class="spec"><dt>Licencia solicitada</dt><dd>@(w.LicenseType ?? "No especificada")</dd></div>
+                            <div class="spec"><dt>Zona de trabajo</dt><dd>@(w.WorkZone ?? "No especificada")</dd></div>
+                            <div class="spec"><dt>Límite de kilometraje</dt><dd>@(w.MonthlyKmLimit is { } km ? Ui.Number(km) + " km al mes" : "Sin límite")</dd></div>
+                            <div class="spec"><dt>Combustible</dt><dd>Lo asume: @Ui.Bearer(w.FuelPaidBy).ToLowerInvariant()</dd></div>
+                            <div class="spec"><dt>Mantenimiento</dt><dd>Lo asume: @Ui.Bearer(w.MaintenancePaidBy).ToLowerInvariant()</dd></div>
+                            <div class="spec"><dt>Seguro</dt><dd>Lo asume: @Ui.Bearer(w.InsurancePaidBy).ToLowerInvariant()</dd></div>
+                            <div class="spec"><dt>Garantía</dt><dd>@(o.Guarantee is { } g ? Ui.Money(o.Currency, g) : "Sin garantía")</dd></div>
+                            <div class="spec"><dt>Disponibilidad</dt><dd>@(o.AvailableFrom is { } af && af > DateTime.UtcNow ? "Desde el " + Ui.Date(af) : o.Status == "AVAILABLE" ? "Inmediata" : "No disponible")</dd></div>
+                        </dl>
+                        @if (!string.IsNullOrWhiteSpace(w.DriverRequirements))
+                        {
+                            <h3 class="mt-4 mb-2 fs-6">Requisitos del conductor</h3>
+                            <p class="mb-0 pre-line">@w.DriverRequirements</p>
+                        }
+                        <p class="hint mt-3 mb-0">MotorLink no valida que un conductor cumpla los requisitos legales para trabajar: confirma licencia, antecedentes y autorizaciones por tu cuenta.</p>
+                    </div>
+                </section>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(d.AdditionalConditions) || ops.Any(o => !string.IsNullOrWhiteSpace(o.AdditionalConditions)) || !string.IsNullOrWhiteSpace(d.ContactHours))
+            {
+                <section class="ml-card"><div class="ml-card__body">
+                    <h2>Condiciones comerciales</h2>
+                    @if (!string.IsNullOrWhiteSpace(d.AdditionalConditions)) { <p class="pre-line">@d.AdditionalConditions</p> }
+                    @foreach (var o in ops.Where(o => !string.IsNullOrWhiteSpace(o.AdditionalConditions))) { <p class="mb-2"><strong>@Ui.Operation(o.OperationType):</strong> @o.AdditionalConditions</p> }
+                    @if (!string.IsNullOrWhiteSpace(d.ContactHours)) { <p class="mb-0 text-muted"><i data-lucide="clock" class="icon--sm"></i> Horario de contacto: @d.ContactHours</p> }
+                </div></section>
+            }
+        </div>
+
+        <aside class="detail-aside" aria-label="Precio y contacto">
+            <div class="ml-card"><div class="ml-card__body stack">
+                @foreach (var o in ops)
+                {
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="eyebrow">@Ui.Operation(o.OperationType)</span>
+                            <span>
+                                @if (o.IsNegotiable) { <span class="ml-badge ml-badge--success">Negociable</span> }
+                                @if (o.Status != "AVAILABLE") { <span class="ml-badge ml-badge--warning">No disponible</span> }
+                            </span>
+                        </div>
+                        <div class="price-list">
+                            @if (o.OperationType == "SALE")
+                            {
+                                <div class="price-row"><span class="price-row__label">Precio de venta</span><span class="price">@Ui.Money(o.Currency, o.SalePrice)</span></div>
+                            }
+                            else
+                            {
+                                if (o.DailyRate is not null) { <div class="price-row @(o.OperationType == "WORK_RENT" ? "price-row--work" : "")"><span class="price-row__label">Tarifa diaria</span><span class="price">@Ui.Money(o.Currency, o.DailyRate)</span></div> }
+                                if (o.WeeklyRate is not null) { <div class="price-row"><span class="price-row__label">Tarifa semanal</span><span class="price">@Ui.Money(o.Currency, o.WeeklyRate)</span></div> }
+                                if (o.MonthlyRate is not null) { <div class="price-row"><span class="price-row__label">Tarifa mensual</span><span class="price">@Ui.Money(o.Currency, o.MonthlyRate)</span></div> }
+                                if (o.Guarantee is not null) { <div class="price-row"><span class="price-row__label">Garantía solicitada</span><strong class="tabular">@Ui.Money(o.Currency, o.Guarantee)</strong></div> }
+                            }
+                        </div>
+                        @if (o.AvailableFrom is { } af && af > DateTime.UtcNow) { <p class="hint mt-2 mb-0">Disponible desde el @Ui.Date(af)</p> }
+                    </div>
+                }
+
+                @if (!d.IsAvailable)
+                {
+                    <div class="notice notice--warning"><i data-lucide="info"></i><div>Esta publicación está <strong>@Ui.ListingStatus(d.Status).ToLowerInvariant()</strong> y no admite nuevas propuestas.</div></div>
+                }
+
+                @if (Model.IsOwner)
+                {
+                    <div class="notice"><i data-lucide="user-check"></i><div>Esta es tu publicación. <a href="/panel/listings" class="fw-semibold">Gestionarla en tu panel</a></div></div>
+                }
+                else
+                {
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success btn-lg" data-contact="WHATSAPP" @(d.ContactAvailable && d.IsAvailable ? null : "disabled")><i data-lucide="message-circle"></i>Contactar por WhatsApp</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#offer-modal" data-require-login @(openOps.Count > 0 ? null : "disabled")><i data-lucide="hand-coins"></i>Enviar propuesta</button>
+                        <div class="d-grid gap-2 grid-2">
+                            <button type="button" class="btn btn-light" data-contact="PHONE" @(d.ContactAvailable && d.IsAvailable ? null : "disabled")><i data-lucide="phone"></i>Ver teléfono</button>
+                            <button type="button" class="btn btn-light" data-favorite="@d.Id" aria-pressed="@(Model.IsFavorite ? "true" : "false")"><i data-lucide="heart"></i><span data-favorite-label>@(Model.IsFavorite ? "Guardado" : "Guardar")</span></button>
+                        </div>
+                    </div>
+                    <div data-phone-out hidden class="notice"><i data-lucide="phone"></i><div>Teléfono: <a class="fw-bold" href="#"></a></div></div>
+                    <p class="hint mb-0">Un acuerdo de precio en MotorLink no confirma pago ni entrega. Pagos y entrega se coordinan directamente con el anunciante.</p>
+                }
+            </div></div>
+
+            <div class="ml-card"><div class="ml-card__body">
+                <div class="d-flex gap-3 align-items-center">
+                    <span class="avatar" aria-hidden="true">@Ui.Initials(d.Advertiser.DisplayName)</span>
+                    <div>
+                        <div class="fw-bold">@d.Advertiser.DisplayName</div>
+                        <span class="ml-badge @(d.Advertiser.AdvertiserType == "BUSINESS" ? "ml-badge--info" : "")">@Ui.ProfileType(d.Advertiser.AdvertiserType)</span>
+                    </div>
+                </div>
+                <dl class="kv mt-3">
+                    <dt>Miembro desde</dt><dd>@Ui.Date(d.Advertiser.MemberSince)</dd>
+                    <dt>Publicaciones activas</dt><dd>@d.Advertiser.ActiveListings</dd>
+                </dl>
+            </div></div>
+        </aside>
+    </div>
+
+    @if (Model.Related.Count > 0)
+    {
+        <section class="mt-5" aria-labelledby="related-title">
+            <div class="section-head"><h2 id="related-title">Vehículos relacionados</h2></div>
+            <div class="listing-grid">
+                @foreach (var l in Model.Related) { <div>@await Component.InvokeAsync("ListingCard", new { listing = l }) </div> }
+            </div>
+        </section>
+    }
+</div>
+
+@if (!Model.IsOwner && openOps.Count > 0)
+{
+    <div class="modal fade" id="offer-modal" tabindex="-1" aria-labelledby="offer-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" asp-area="Dashboard" asp-controller="Negotiations" asp-action="Start" method="post" data-offer-form>
+                <div class="modal-header"><h2 class="modal-title" id="offer-title">Enviar propuesta</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+                <div class="modal-body stack">
+                    <input type="hidden" name="ListingId" value="@d.Id" />
+                    <div>
+                        <label class="form-label" for="offer-op">Modalidad</label>
+                        <select id="offer-op" name="OperationType" class="form-select" required>
+                            @foreach (var o in openOps)
+                            {
+                                var rent = o.OperationType != "SALE";
+                                <option value="@o.OperationType" data-rent="@(rent ? "true" : "false")" data-symbol="@Ui.Symbol(o.Currency)" data-sale="@o.SalePrice" data-daily="@o.DailyRate" data-weekly="@o.WeeklyRate" data-monthly="@o.MonthlyRate">@Ui.Operation(o.OperationType)</option>
+                            }
+                        </select>
+                    </div>
+                    <div data-period-wrap>
+                        <label class="form-label" for="offer-period">Periodicidad</label>
+                        <select id="offer-period" name="Periodicity" class="form-select">
+                            <option value="DAILY">Por día</option><option value="WEEKLY">Por semana</option><option value="MONTHLY">Por mes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="offer-amount">Tu oferta</label>
+                        <div class="input-group">
+                            <span class="input-group-text" data-symbol>S/</span>
+                            <input id="offer-amount" name="Amount" class="form-control" type="number" min="0.01" step="0.01" inputmode="decimal" required />
+                        </div>
+                        <div class="form-text" data-offer-hint></div>
+                    </div>
+                    <div>
+                        <label class="form-label" for="offer-msg">Mensaje (opcional)</label>
+                        <textarea id="offer-msg" name="Message" class="form-control" rows="3" maxlength="1000" placeholder="Cuéntale al propietario por qué tu oferta es justa."></textarea>
+                    </div>
+                    <p class="hint mb-0">Si el propietario acepta, quedará registrado el precio acordado. No se realiza ningún pago a través de MotorLink.</p>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Enviar propuesta</button></div>
+            </form>
+        </div>
+    </div>
+}

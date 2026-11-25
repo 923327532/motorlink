@@ -1,0 +1,94 @@
+# MotorLink - entorno completo: SQL Server + API + Web.
+# Uso: copiar .env.example a .env, completar los secretos y ejecutar `docker compose up --build`.
+
+name: motorlink
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Define MSSQL_SA_PASSWORD en .env}
+      # Developer = SOLO desarrollo/pruebas. En producción use una edición con licencia (Standard, Enterprise, Express...).
+      MSSQL_PID: ${MSSQL_PID:-Developer}
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks: [data]            # red privada: sin puertos publicados al host
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ConnectionStrings__Default: Server=db,1433;Database=MotorLinkDB;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=True
+      Jwt__Key: ${JWT_KEY:?Define JWT_KEY en .env (minimo 32 caracteres)}
+      Jwt__Issuer: ${JWT_ISSUER:-MotorLink.API}
+      Jwt__Audience: ${JWT_AUDIENCE:-MotorLink.Web}
+      Database__MigrateOnStartup: "true"
+      Database__AdminEmail: ${ADMIN_EMAIL:-}
+      Database__AdminPassword: ${ADMIN_PASSWORD:-}
+      Swagger__Enabled: ${SWAGGER_ENABLED:-false}
+      # Fotografías (Cloudinary). Sin credenciales la carga de imágenes responde "no configurado".
+      Cloudinary__CloudName: ${CLOUDINARY_CLOUD_NAME:-}
+      Cloudinary__ApiKey: ${CLOUDINARY_API_KEY:-}
+      Cloudinary__ApiSecret: ${CLOUDINARY_API_SECRET:-}
+      # Sin Cloudinary, true guarda las fotos en el volumen media_data (solo desarrollo/demo; con Cloudinary configurado se ignora).
+      ImageStorage__LocalFallback: ${IMAGE_LOCAL_FALLBACK:-false}
+      # Pagos de DEMOSTRACIÓN (no cobran dinero). Mantener en false hasta integrar una pasarela real.
+      Billing__DemoPaymentsEnabled: ${BILLING_DEMO_PAYMENTS:-false}
+      Maintenance__IntervalMinutes: ${MAINTENANCE_INTERVAL_MINUTES:-10}
+      # El salto web -> API ocurre dentro de la red privada de Docker; TLS se termina en el proxy inverso delante de "web".
+      Security__RequireHttps: "false"
+    volumes:
+      - media_data:/app/App_Data
+    ports:
+      - "${API_BIND:-127.0.0.1}:${API_PORT:-5080}:8080"   # por defecto solo accesible desde el propio host
+    networks: [data, app]
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf \"GET /health/live HTTP/1.0\\r\\n\\r\\n\" >&3 && head -1 <&3 | grep -q 200'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  web:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      Api__BaseUrl: http://backend:8080/
+      # true cuando hay HTTPS delante (producción). Con false la cookie sigue siendo HttpOnly + SameSite pero sin Secure.
+      Security__SecureCookies: ${SECURE_COOKIES:-false}
+      Security__RequireHttps: "false"
+    ports:
+      - "${WEB_PORT:-5090}:8080"
+    volumes:
+      - web_sessions:/app/data/sessions
+      - web_keys:/app/data/keys
+    networks: [app]
+
+networks:
+  data:
+    internal: true   # sin salida a Internet ni acceso desde el host
+  app:
+
+volumes:
+  mssql_data:
+  media_data:
+  web_sessions:
+  web_keys:

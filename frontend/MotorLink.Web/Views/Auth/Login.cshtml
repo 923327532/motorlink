@@ -1,0 +1,29 @@
+@model LoginViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Iniciar sesión";
+}
+<h1>Iniciar sesión</h1>
+<p class="text-muted mb-4">Accede a tu cuenta para publicar, negociar y gestionar tus vehículos.</p>
+
+<form asp-action="Login" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="mb-3" role="alert"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" autocomplete="username" inputmode="email" autofocus />
+        <span asp-validation-for="Email" class="field-validation-error"></span>
+    </div>
+    <div class="mb-4">
+        <label asp-for="Password" class="form-label"></label>
+        <div class="input-affix">
+            <input asp-for="Password" class="form-control pe-5" autocomplete="current-password" />
+            <span class="affix"><button type="button" class="btn btn-ghost btn-sm" data-toggle-password="#Password" aria-label="Mostrar contraseña" aria-pressed="false"><i data-lucide="eye"></i></button></span>
+        </div>
+        <span asp-validation-for="Password" class="field-validation-error"></span>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg w-100">Iniciar sesión</button>
+</form>
+<p class="mt-4 text-center text-muted">¿Aún no tienes cuenta? <a class="fw-semibold" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Crear cuenta</a></p>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
